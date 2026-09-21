@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Touch Football - Leaderboard</title>
+    <title>One Touch Football - Secure Leaderboard</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -38,15 +38,6 @@
             margin-bottom: 10px;
         }
 
-        .badge {
-            background-color: var(--border-color);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: #fff;
-        }
-
-        /* Login & Host Section */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -55,7 +46,7 @@
             margin-bottom: 15px;
         }
 
-        input, select, button {
+        input, select, button, textarea {
             width: 100%;
             padding: 10px;
             margin: 5px 0 10px 0;
@@ -76,10 +67,10 @@
         .btn-green { background-color: var(--accent-green); border: none; }
         .btn-purple { background-color: var(--accent-purple); border: none; }
         .btn-red { background-color: var(--accent-red); border: none; }
+        .btn-gold { background-color: var(--accent-gold); border: none; color: #000; }
 
         button:hover { opacity: 0.9; }
 
-        /* Leaderboard Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -87,27 +78,26 @@
         }
 
         th, td {
-            padding: 12px 8px;
+            padding: 10px 6px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
         }
 
         th { background-color: #21262d; color: #58a6ff; }
-
-        tr:nth-child(1) td { font-weight: bold; color: #f1e05a; } /* 1st Place Gold */
+        tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
 
         .action-btns {
             display: flex;
-            gap: 5px;
+            gap: 4px;
         }
 
         .action-btns button {
-            padding: 5px 8px;
-            font-size: 0.8rem;
+            padding: 4px 6px;
+            font-size: 0.75rem;
             margin: 0;
         }
 
-        /* Milestones */
         .milestone-box {
             display: flex;
             justify-content: space-between;
@@ -115,27 +105,12 @@
             padding: 10px;
             border-radius: 6px;
             margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-            border: 1px solid var(--border-color);
-        }
+        .host-only { display: none; }
+        .app-content { display: none; }
+        .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -143,194 +118,167 @@
 <div class="container">
     <h1>⚽ One Touch League</h1>
 
-    <!-- Player Login / Self Identification -->
+    <!-- Password Login Screen -->
     <div class="card" id="loginCard">
-        <h3>👤 Player Verification Login</h3>
-        <input type="text" id="loginName" placeholder="Enter your Name (e.g. Akshuman)">
-        <input type="number" id="loginWins" placeholder="Enter your Current Wins (e.g. 42)">
-        <button class="btn-green" onclick="verifyLogin()">Login & Verify Profile</button>
-        <p id="loginMsg" style="color: #ff7b72; font-size: 0.85rem; text-align: center;"></p>
+        <h3>🔒 Protected Login</h3>
+        <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
+        
+        <label>Select Player:</label>
+        <select id="loginSelect"></select>
+
+        <label>Password:</label>
+        <input type="password" id="loginPass" placeholder="Enter Password">
+
+        <button class="btn-green" onclick="attemptLogin()">Login</button>
+        <p id="loginError" style="color: #ff7b72; font-size: 0.85rem; text-align: center;"></p>
     </div>
 
-    <!-- Match Milestones -->
-    <div class="card">
-        <h3>🔥 Match Milestones</h3>
-        <div class="milestone-box">
-            <span>⚡ <b>Agony Match</b> (50 Wins):</span>
-            <span id="agonyStatus">Loading...</span>
+    <!-- Main App Content (Hidden until login) -->
+    <div class="app-content" id="appContent">
+        <div class="user-tag" id="userTag"></div>
+
+        <!-- Host Only: Add/Subtract Wins & Manage -->
+        <div class="card host-only">
+            <h3>👑 Host Settings (Aarav Manohar)</h3>
+            <p style="font-size: 0.8rem; color: #8b949e;">Use controls below to adjust scores. When finished, export and paste the code to GitHub.</p>
+            <button class="btn-gold" onclick="exportGitHubCode()">📋 Copy Updated Code for GitHub</button>
+            <textarea id="exportArea" rows="4" style="display:none; font-family: monospace; font-size: 0.75rem;" readonly></textarea>
         </div>
-        <div class="milestone-box">
-            <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
-            <span id="tortureStatus">Loading...</span>
+
+        <!-- Match Milestones -->
+        <div class="card">
+            <h3>🔥 Match Milestones</h3>
+            <div class="milestone-box">
+                <span>⚡ <b>Agony Match</b> (50 Wins):</span>
+                <span id="agonyStatus">Loading...</span>
+            </div>
+            <div class="milestone-box">
+                <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
+                <span id="tortureStatus">Loading...</span>
+            </div>
         </div>
-    </div>
 
-    <!-- Master Curse Panel (Host Only) -->
-    <div class="card">
-        <h3>🪄 Master Curses Control</h3>
-        <select id="curseTarget"></select>
-        <select id="curseOutcome">
-            <option value="Forced Miss">Command: Forced Miss</option>
-            <option value="Forced Goal">Command: Forced Goal / Score</option>
-            <option value="Forced Save">Command: Forced Save</option>
-        </select>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
-            <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+        <!-- Master Curses Panel (Host Only Controls) -->
+        <div class="card host-only">
+            <h3>🪄 Master Curses Control</h3>
+            <label>Target Player:</label>
+            <select id="curseTarget"></select>
+            <label>Command Outcome:</label>
+            <select id="curseOutcome">
+                <option value="Forced Miss">Command: Forced Miss</option>
+                <option value="Forced Goal">Command: Forced Goal / Score</option>
+                <option value="Forced Save">Command: Forced Save</option>
+            </select>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
+                <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Leaderboard -->
-    <div class="card">
-        <h3>🏆 Leaderboard Standings</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Player</th>
-                    <th>Wins</th>
-                    <th>Host Action</th>
-                </tr>
-            </thead>
-            <tbody id="leaderboardBody"></tbody>
-        </table>
-    </div>
-</div>
+        <!-- Leaderboard Standings -->
+        <div class="card">
+            <h3>🏆 Leaderboard Standings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Wins</th>
+                        <th class="host-only">Host Action</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </div>
 
-<!-- Confirmation Modal for Anti-Bias -->
-<div class="modal" id="confirmModal">
-    <div class="modal-content">
-        <h3>🤝 Unbiased Confirmation</h3>
-        <p id="modalText"></p>
-        <p><i>Ask a second player standing nearby to tap confirm:</i></p>
-        <button class="btn-green" onclick="confirmWinAction()">Yes, Confirm Win (+1)</button>
-        <button class="btn-red" onclick="closeModal()">Cancel</button>
+        <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
     </div>
 </div>
 
 <script>
-    // Initial pre-loaded players and wins
-    const initialData = [
-        { name: "Akshuman", wins: 42 },
-        { name: "Daniel", wins: 42 },
-        { name: "Jashith", wins: 29 },
-        { name: "Aarav", wins: 12 },
-        { name: "Taanish", wins: 12 },
-        { name: "Peiush", wins: 9 },
-        { name: "Sai", wins: 6 },
-        { name: "Manaar", wins: 3 },
-        { name: "Tawan", wins: 3 },
-        { name: "Muhamed", wins: 1 },
-        { name: "Danush", wins: 1 }
+    // PRE-LOADED PLAYER DATA
+    // To update live for everyone, change these win counts when editing index.html on GitHub!
+    let players = [
+        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
+        { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
+        { name: "Daniel", wins: 42, pass: "1234", isHost: false },
+        { name: "Jashith", wins: 29, pass: "1234", isHost: false },
+        { name: "Taanish", wins: 12, pass: "1234", isHost: false },
+        { name: "Peiush", wins: 9, pass: "1234", isHost: false },
+        { name: "Sai", wins: 6, pass: "1234", isHost: false },
+        { name: "Manaar", wins: 3, pass: "1234", isHost: false },
+        { name: "Tawan", wins: 3, pass: "1234", isHost: false },
+        { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
+        { name: "Danush", wins: 1, pass: "1234", isHost: false }
     ];
 
-    // Load data from localStorage or initial state
-    let players = JSON.parse(localStorage.getItem('oneTouchPlayers')) || initialData;
-    let pendingPlayerIndex = null;
+    let currentUser = null;
 
-    function saveData() {
-        localStorage.setItem('oneTouchPlayers', JSON.stringify(players));
-    }
-
-    // Levenshtein / Fuzzy string matching for spelling mistakes
-    function similarity(s1, s2) {
-        let longer = s1.toLowerCase(), shorter = s2.toLowerCase();
-        if (s1.length < s2.length) { longer = s2.toLowerCase(); shorter = s1.toLowerCase(); }
-        let longerLength = longer.length;
-        if (longerLength === 0) return 1.0;
-        return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
-    }
-
-    function editDistance(s1, s2) {
-        let costs = [];
-        for (let i = 0; i <= s1.length; i++) {
-            let lastValue = i;
-            for (let j = 0; j <= s2.length; j++) {
-                if (i === 0) costs[j] = j;
-                else {
-                    if (j > 0) {
-                        let newValue = costs[j - 1];
-                        if (s1.charAt(i - 1) !== s2.charAt(j - 1))
-                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                        costs[j - 1] = lastValue;
-                        lastValue = newValue;
-                    }
-                }
-            }
-            if (i > 0) costs[s2.length] = lastValue;
-        }
-        return costs[s2.length];
-    }
-
-    // Smart Login System
-    function verifyLogin() {
-        const inputName = document.getElementById('loginName').value.trim();
-        const inputWins = parseInt(document.getElementById('loginWins').value);
-        const msg = document.getElementById('loginMsg');
-
-        if (!inputName || isNaN(inputWins)) {
-            msg.textContent = "Please enter both your name and your wins!";
-            return;
-        }
-
-        // Search for exact or fuzzy match
-        let bestMatch = null;
-        let highestScore = 0;
-
+    // Populate dropdown on load
+    function initLoginSelect() {
+        const select = document.getElementById('loginSelect');
+        select.innerHTML = '';
         players.forEach((p, idx) => {
-            let sim = similarity(inputName, p.name);
-            let winMatch = p.wins === inputWins;
-            
-            // Weight win match highly
-            let score = sim + (winMatch ? 0.5 : 0);
-            if (score > highestScore) {
-                highestScore = score;
-                bestMatch = { player: p, index: idx, similarity: sim };
-            }
+            let opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = p.name + (p.isHost ? " (Host)" : "");
+            select.appendChild(opt);
         });
+    }
 
-        if (bestMatch && (bestMatch.similarity > 0.6 || bestMatch.player.wins === inputWins)) {
-            msg.style.color = "#2ea043";
-            msg.textContent = `Welcome back, ${bestMatch.player.name}! Verified (${bestMatch.player.wins} Wins).`;
+    function attemptLogin() {
+        const idx = document.getElementById('loginSelect').value;
+        const pass = document.getElementById('loginPass').value.trim();
+        const err = document.getElementById('loginError');
+
+        if (players[idx].pass === pass) {
+            currentUser = players[idx];
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            document.getElementById('userTag').innerHTML = `Logged in as: <b>${currentUser.name}</b> ${currentUser.isHost ? "👑 (Host)" : ""}`;
+            
+            // Toggle Host-only UI elements
+            const hostElements = document.querySelectorAll('.host-only');
+            hostElements.forEach(el => {
+                el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
+            });
+
+            updateUI();
         } else {
-            // Add as new player if no close match found
-            players.push({ name: inputName, wins: inputWins });
-            saveData();
-            updateUI();
-            msg.style.color = "#2ea043";
-            msg.textContent = `New player profile created for ${inputName}!`;
+            err.textContent = "Incorrect Password! Please try again.";
         }
     }
 
-    // Add Win Flow with Unbiased Confirmation
-    function requestWin(index) {
-        pendingPlayerIndex = index;
-        document.getElementById('modalText').textContent = `Add +1 Win to ${players[index].name}?`;
-        document.getElementById('confirmModal').style.display = 'flex';
+    function logout() {
+        currentUser = null;
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginError').textContent = '';
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('appContent').style.display = 'none';
     }
 
-    function confirmWinAction() {
-        if (pendingPlayerIndex !== null) {
-            players[pendingPlayerIndex].wins += 1;
-            saveData();
+    function addWin(index) {
+        if (!currentUser || !currentUser.isHost) return;
+        players[index].wins += 1;
+        updateUI();
+    }
+
+    function subWin(index) {
+        if (!currentUser || !currentUser.isHost) return;
+        if (players[index].wins > 0) {
+            players[index].wins -= 1;
             updateUI();
-            closeModal();
         }
     }
 
-    function closeModal() {
-        document.getElementById('confirmModal').style.display = 'none';
-        pendingPlayerIndex = null;
-    }
-
-    // Master Curses Logic
     function castCurse(type) {
+        if (!currentUser || !currentUser.isHost) return;
         const targetIndex = document.getElementById('curseTarget').value;
         const outcome = document.getElementById('curseOutcome').value;
         const player = players[targetIndex];
 
         if (type === 'leaf') {
-            const success = Math.random() < 0.90; // 90% chance
+            const success = Math.random() < 0.90;
             if (success) {
                 alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} was hit with: "${outcome}"!`);
             } else {
@@ -341,9 +289,8 @@
         }
     }
 
-    // Update UI & Leaderboard Sorting
     function updateUI() {
-        // Sort players by wins descending
+        // Sort standings
         players.sort((a, b) => b.wins - a.wins);
 
         const tbody = document.getElementById('leaderboardBody');
@@ -353,7 +300,6 @@
 
         let currentRank = 1;
         players.forEach((p, index) => {
-            // Rank calculation with ties
             if (index > 0 && p.wins < players[index - 1].wins) {
                 currentRank = index + 1;
             }
@@ -363,13 +309,14 @@
                 <td><b>#${currentRank}</b></td>
                 <td>${p.name}</td>
                 <td>${p.wins}</td>
-                <td class="action-btns">
-                    <button class="btn-green" onclick="requestWin(${index})">+1 Win</button>
-                </td>
+                ${currentUser && currentUser.isHost ? `
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(${index})">+1</button>
+                    <button class="btn-red" onclick="subWin(${index})">-1</button>
+                </td>` : ''}
             `;
             tbody.appendChild(tr);
 
-            // Populate curse dropdown
             let opt = document.createElement('option');
             opt.value = index;
             opt.textContent = `${p.name} (${p.wins} wins)`;
@@ -390,9 +337,20 @@
             : `${tortureDiff} wins needed (${players[0].name} closest)`;
     }
 
-    // Initialize UI on load
-    updateUI();
+    function exportGitHubCode() {
+        const fullDoc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const area = document.getElementById('exportArea');
+        area.style.display = 'block';
+        area.value = fullDoc;
+        area.select();
+        document.execCommand('copy');
+        alert("✅ Entire updated HTML code copied to clipboard!\n\nGo to your GitHub index.html file, click edit (pencil icon), replace all code, and click 'Commit changes'.");
+    }
+
+    // Initialize dropdown on load
+    initLoginSelect();
 </script>
 
 </body>
 </html>
+
