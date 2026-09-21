@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One Touch Football - Secure Leaderboard</title>
@@ -112,19 +111,19 @@
         .app-content { display: none; }
         .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
     </style>
-</head>
+<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
 <body>
 
 <div class="container">
     <h1>⚽ One Touch League</h1>
 
     <!-- Password Login Screen -->
-    <div class="card" id="loginCard">
+    <div class="card" id="loginCard" style="display: none;">
         <h3>🔒 Protected Login</h3>
         <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
         
         <label>Select Player:</label>
-        <select id="loginSelect"></select>
+        <select id="loginSelect"><option value="0">Aarav Manohar (Host)</option><option value="1">Akshuman</option><option value="2">Daniel</option><option value="3">Jashith</option><option value="4">Taanish</option><option value="5">Peiush</option><option value="6">Sai</option><option value="7">Manaar</option><option value="8">Tawan</option><option value="9">Muhamed</option><option value="10">Danush</option></select>
 
         <label>Password:</label>
         <input type="password" id="loginPass" placeholder="Enter Password">
@@ -134,15 +133,15 @@
     </div>
 
     <!-- Main App Content (Hidden until login) -->
-    <div class="app-content" id="appContent">
-        <div class="user-tag" id="userTag"></div>
+    <div class="app-content" id="appContent" style="display: block;">
+        <div class="user-tag" id="userTag">Logged in as: <b>Aarav Manohar</b> 👑 (Host)</div>
 
         <!-- Host Only: Add/Subtract Wins & Manage -->
-        <div class="card host-only">
+        <div class="card host-only" style="display: block;">
             <h3>👑 Host Settings (Aarav Manohar)</h3>
             <p style="font-size: 0.8rem; color: #8b949e;">Use controls below to adjust scores. When finished, export and paste the code to GitHub.</p>
             <button class="btn-gold" onclick="exportGitHubCode()">📋 Copy Updated Code for GitHub</button>
-            <textarea id="exportArea" rows="4" style="display:none; font-family: monospace; font-size: 0.75rem;" readonly></textarea>
+            <textarea id="exportArea" rows="4" style="display:none; font-family: monospace; font-size: 0.75rem;" readonly=""></textarea>
         </div>
 
         <!-- Match Milestones -->
@@ -150,19 +149,19 @@
             <h3>🔥 Match Milestones</h3>
             <div class="milestone-box">
                 <span>⚡ <b>Agony Match</b> (50 Wins):</span>
-                <span id="agonyStatus">Loading...</span>
+                <span id="agonyStatus">8 wins needed (Akshuman closest)</span>
             </div>
             <div class="milestone-box">
                 <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
-                <span id="tortureStatus">Loading...</span>
+                <span id="tortureStatus">58 wins needed (Akshuman closest)</span>
             </div>
         </div>
 
         <!-- Master Curses Panel (Host Only Controls) -->
-        <div class="card host-only">
+        <div class="card host-only" style="display: block;">
             <h3>🪄 Master Curses Control</h3>
             <label>Target Player:</label>
-            <select id="curseTarget"></select>
+            <select id="curseTarget"><option value="0">Akshuman (42 wins)</option><option value="1">Daniel (42 wins)</option><option value="2">Jashith (29 wins)</option><option value="3">Aarav Manohar (14 wins)</option><option value="4">Taanish (12 wins)</option><option value="5">Peiush (9 wins)</option><option value="6">Sai (8 wins)</option><option value="7">Manaar (3 wins)</option><option value="8">Tawan (3 wins)</option><option value="9">Muhamed (1 wins)</option><option value="10">Danush (1 wins)</option></select>
             <label>Command Outcome:</label>
             <select id="curseOutcome">
                 <option value="Forced Miss">Command: Forced Miss</option>
@@ -184,10 +183,109 @@
                         <th>Rank</th>
                         <th>Player</th>
                         <th>Wins</th>
-                        <th class="host-only">Host Action</th>
+                        <th class="host-only" style="display: table-cell;">Host Action</th>
                     </tr>
                 </thead>
-                <tbody id="leaderboardBody"></tbody>
+                <tbody id="leaderboardBody"><tr>
+                <td><b>#1</b></td>
+                <td>Akshuman</td>
+                <td>42</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(0)">+1</button>
+                    <button class="btn-red" onclick="subWin(0)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#1</b></td>
+                <td>Daniel</td>
+                <td>42</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(1)">+1</button>
+                    <button class="btn-red" onclick="subWin(1)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#3</b></td>
+                <td>Jashith</td>
+                <td>29</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(2)">+1</button>
+                    <button class="btn-red" onclick="subWin(2)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#4</b></td>
+                <td>Aarav Manohar</td>
+                <td>14</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(3)">+1</button>
+                    <button class="btn-red" onclick="subWin(3)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#5</b></td>
+                <td>Taanish</td>
+                <td>12</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(4)">+1</button>
+                    <button class="btn-red" onclick="subWin(4)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#6</b></td>
+                <td>Peiush</td>
+                <td>9</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(5)">+1</button>
+                    <button class="btn-red" onclick="subWin(5)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#7</b></td>
+                <td>Sai</td>
+                <td>8</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(6)">+1</button>
+                    <button class="btn-red" onclick="subWin(6)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#8</b></td>
+                <td>Manaar</td>
+                <td>3</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(7)">+1</button>
+                    <button class="btn-red" onclick="subWin(7)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#8</b></td>
+                <td>Tawan</td>
+                <td>3</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(8)">+1</button>
+                    <button class="btn-red" onclick="subWin(8)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#10</b></td>
+                <td>Muhamed</td>
+                <td>1</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(9)">+1</button>
+                    <button class="btn-red" onclick="subWin(9)">-1</button>
+                </td>
+            </tr><tr>
+                <td><b>#10</b></td>
+                <td>Danush</td>
+                <td>1</td>
+                
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(10)">+1</button>
+                    <button class="btn-red" onclick="subWin(10)">-1</button>
+                </td>
+            </tr></tbody>
             </table>
         </div>
 
@@ -351,6 +449,7 @@
     initLoginSelect();
 </script>
 
-</body>
-</html>
 
+
+
+</body></html>
