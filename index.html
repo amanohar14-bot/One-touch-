@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Touch Football - Secure Leaderboard</title>
+    <title>One Touch Football - Realtime GitHub Sync</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -11,6 +12,7 @@
             --accent-gold: #d29922;
             --accent-red: #da3633;
             --accent-purple: #8957e5;
+            --accent-blue: #58a6ff;
             --text-color: #c9d1d9;
             --border-color: #30363d;
         }
@@ -45,7 +47,7 @@
             margin-bottom: 15px;
         }
 
-        input, select, button, textarea {
+        input, select, button {
             width: 100%;
             padding: 10px;
             margin: 5px 0 10px 0;
@@ -83,7 +85,7 @@
             font-size: 0.95rem;
         }
 
-        th { background-color: #21262d; color: #58a6ff; }
+        th { background-color: #21262d; color: var(--accent-blue); }
         tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
 
         .action-btns {
@@ -107,23 +109,41 @@
             font-size: 0.85rem;
         }
 
+        .progress-container {
+            width: 100%;
+            background-color: #21262d;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 12px;
+            margin-top: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2ea043, #d29922);
+            width: 0%;
+            transition: width 0.4s ease-in-out;
+        }
+
+        .player-info { display: flex; flex-direction: column; }
         .host-only { display: none; }
         .app-content { display: none; }
         .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
     </style>
-<script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
+</head>
 <body>
 
 <div class="container">
     <h1>⚽ One Touch League</h1>
 
     <!-- Password Login Screen -->
-    <div class="card" id="loginCard" style="display: none;">
+    <div class="card" id="loginCard">
         <h3>🔒 Protected Login</h3>
         <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
         
         <label>Select Player:</label>
-        <select id="loginSelect"><option value="0">Aarav Manohar (Host)</option><option value="1">Akshuman</option><option value="2">Daniel</option><option value="3">Jashith</option><option value="4">Taanish</option><option value="5">Peiush</option><option value="6">Sai</option><option value="7">Manaar</option><option value="8">Tawan</option><option value="9">Muhamed</option><option value="10">Danush</option></select>
+        <select id="loginSelect"></select>
 
         <label>Password:</label>
         <input type="password" id="loginPass" placeholder="Enter Password">
@@ -132,16 +152,16 @@
         <p id="loginError" style="color: #ff7b72; font-size: 0.85rem; text-align: center;"></p>
     </div>
 
-    <!-- Main App Content (Hidden until login) -->
-    <div class="app-content" id="appContent" style="display: block;">
-        <div class="user-tag" id="userTag">Logged in as: <b>Aarav Manohar</b> 👑 (Host)</div>
+    <!-- Main App Content -->
+    <div class="app-content" id="appContent">
+        <div class="user-tag" id="userTag"></div>
 
-        <!-- Host Only: Add/Subtract Wins & Manage -->
-        <div class="card host-only" style="display: block;">
-            <h3>👑 Host Settings (Aarav Manohar)</h3>
-            <p style="font-size: 0.8rem; color: #8b949e;">Use controls below to adjust scores. When finished, export and paste the code to GitHub.</p>
-            <button class="btn-gold" onclick="exportGitHubCode()">📋 Copy Updated Code for GitHub</button>
-            <textarea id="exportArea" rows="4" style="display:none; font-family: monospace; font-size: 0.75rem;" readonly=""></textarea>
+        <!-- Host Settings for Auto-Sync -->
+        <div class="card host-only">
+            <h3>👑 Host 1-Click GitHub Sync</h3>
+            <p style="font-size: 0.8rem; color: #8b949e;">Paste your Personal Access Token once below. Pressing <b>+1</b> or <b>-1</b> will automatically update GitHub live for everyone!</p>
+            <input type="password" id="ghToken" placeholder="Paste GitHub Token (ghp_...)" onchange="saveToken()">
+            <p id="syncStatus" style="font-size: 0.8rem; text-align: center; color: #58a6ff;"></p>
         </div>
 
         <!-- Match Milestones -->
@@ -149,19 +169,19 @@
             <h3>🔥 Match Milestones</h3>
             <div class="milestone-box">
                 <span>⚡ <b>Agony Match</b> (50 Wins):</span>
-                <span id="agonyStatus">8 wins needed (Akshuman closest)</span>
+                <span id="agonyStatus">Loading...</span>
             </div>
             <div class="milestone-box">
                 <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
-                <span id="tortureStatus">58 wins needed (Akshuman closest)</span>
+                <span id="tortureStatus">Loading...</span>
             </div>
         </div>
 
-        <!-- Master Curses Panel (Host Only Controls) -->
-        <div class="card host-only" style="display: block;">
+        <!-- Master Curses Panel -->
+        <div class="card host-only">
             <h3>🪄 Master Curses Control</h3>
             <label>Target Player:</label>
-            <select id="curseTarget"><option value="0">Akshuman (42 wins)</option><option value="1">Daniel (42 wins)</option><option value="2">Jashith (29 wins)</option><option value="3">Aarav Manohar (14 wins)</option><option value="4">Taanish (12 wins)</option><option value="5">Peiush (9 wins)</option><option value="6">Sai (8 wins)</option><option value="7">Manaar (3 wins)</option><option value="8">Tawan (3 wins)</option><option value="9">Muhamed (1 wins)</option><option value="10">Danush (1 wins)</option></select>
+            <select id="curseTarget"></select>
             <label>Command Outcome:</label>
             <select id="curseOutcome">
                 <option value="Forced Miss">Command: Forced Miss</option>
@@ -181,111 +201,12 @@
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>Player</th>
+                        <th>Player & Goal Progress</th>
                         <th>Wins</th>
-                        <th class="host-only" style="display: table-cell;">Host Action</th>
+                        <th class="host-only">Host Action</th>
                     </tr>
                 </thead>
-                <tbody id="leaderboardBody"><tr>
-                <td><b>#1</b></td>
-                <td>Akshuman</td>
-                <td>42</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(0)">+1</button>
-                    <button class="btn-red" onclick="subWin(0)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#1</b></td>
-                <td>Daniel</td>
-                <td>42</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(1)">+1</button>
-                    <button class="btn-red" onclick="subWin(1)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#3</b></td>
-                <td>Jashith</td>
-                <td>29</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(2)">+1</button>
-                    <button class="btn-red" onclick="subWin(2)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#4</b></td>
-                <td>Aarav Manohar</td>
-                <td>14</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(3)">+1</button>
-                    <button class="btn-red" onclick="subWin(3)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#5</b></td>
-                <td>Taanish</td>
-                <td>12</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(4)">+1</button>
-                    <button class="btn-red" onclick="subWin(4)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#6</b></td>
-                <td>Peiush</td>
-                <td>9</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(5)">+1</button>
-                    <button class="btn-red" onclick="subWin(5)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#7</b></td>
-                <td>Sai</td>
-                <td>8</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(6)">+1</button>
-                    <button class="btn-red" onclick="subWin(6)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#8</b></td>
-                <td>Manaar</td>
-                <td>3</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(7)">+1</button>
-                    <button class="btn-red" onclick="subWin(7)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#8</b></td>
-                <td>Tawan</td>
-                <td>3</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(8)">+1</button>
-                    <button class="btn-red" onclick="subWin(8)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#10</b></td>
-                <td>Muhamed</td>
-                <td>1</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(9)">+1</button>
-                    <button class="btn-red" onclick="subWin(9)">-1</button>
-                </td>
-            </tr><tr>
-                <td><b>#10</b></td>
-                <td>Danush</td>
-                <td>1</td>
-                
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(10)">+1</button>
-                    <button class="btn-red" onclick="subWin(10)">-1</button>
-                </td>
-            </tr></tbody>
+                <tbody id="leaderboardBody"></tbody>
             </table>
         </div>
 
@@ -294,8 +215,11 @@
 </div>
 
 <script>
-    // PRE-LOADED PLAYER DATA
-    // To update live for everyone, change these win counts when editing index.html on GitHub!
+    // GitHub Repo Configuration
+    const REPO_OWNER = "amanohar14-bot";
+    const REPO_NAME = "One-touch-";
+    const FILE_PATH = "index.html";
+
     let players = [
         { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
         { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
@@ -307,12 +231,12 @@
         { name: "Manaar", wins: 3, pass: "1234", isHost: false },
         { name: "Tawan", wins: 3, pass: "1234", isHost: false },
         { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
-        { name: "Danush", wins: 1, pass: "1234", isHost: false }
+        { name: "Danush", wins: 1, pass: "1234", isHost: false },
+        { name: "Sathvik", wins: 1, pass: "1234", isHost: false }
     ];
 
     let currentUser = null;
 
-    // Populate dropdown on load
     function initLoginSelect() {
         const select = document.getElementById('loginSelect');
         select.innerHTML = '';
@@ -322,6 +246,11 @@
             opt.textContent = p.name + (p.isHost ? " (Host)" : "");
             select.appendChild(opt);
         });
+    }
+
+    function saveToken() {
+        const token = document.getElementById('ghToken').value.trim();
+        localStorage.setItem('gh_sync_token', token);
     }
 
     function attemptLogin() {
@@ -335,7 +264,10 @@
             document.getElementById('appContent').style.display = 'block';
             document.getElementById('userTag').innerHTML = `Logged in as: <b>${currentUser.name}</b> ${currentUser.isHost ? "👑 (Host)" : ""}`;
             
-            // Toggle Host-only UI elements
+            if (currentUser.isHost && localStorage.getItem('gh_sync_token')) {
+                document.getElementById('ghToken').value = localStorage.getItem('gh_sync_token');
+            }
+
             const hostElements = document.querySelectorAll('.host-only');
             hostElements.forEach(el => {
                 el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
@@ -355,10 +287,61 @@
         document.getElementById('appContent').style.display = 'none';
     }
 
+    async function pushToGitHub() {
+        const token = localStorage.getItem('gh_sync_token') || document.getElementById('ghToken').value.trim();
+        const status = document.getElementById('syncStatus');
+
+        if (!token) {
+            status.textContent = "⚠️ Please paste your GitHub Token above to auto-sync live!";
+            return;
+        }
+
+        status.textContent = "⏳ Syncing live to GitHub...";
+
+        try {
+            // Get SHA of current file
+            const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+                headers: { "Authorization": `token ${token}` }
+            });
+            const getData = await getRes.json();
+            const sha = getData.sha;
+
+            // Prepare full updated content
+            const content = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const encodedContent = btoa(unescape(encodeURIComponent(content)));
+
+            // Update file on GitHub via API
+            const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Auto-update leaderboard wins",
+                    content: encodedContent,
+                    sha: sha
+                })
+            });
+
+            if (putRes.ok) {
+                status.style.color = "#2ea043";
+                status.textContent = "✅ Updated Live on GitHub!";
+            } else {
+                status.style.color = "#ff7b72";
+                status.textContent = "❌ Sync failed. Check token permissions.";
+            }
+        } catch (e) {
+            status.style.color = "#ff7b72";
+            status.textContent = "❌ Error connecting to GitHub.";
+        }
+    }
+
     function addWin(index) {
         if (!currentUser || !currentUser.isHost) return;
         players[index].wins += 1;
         updateUI();
+        pushToGitHub();
     }
 
     function subWin(index) {
@@ -366,6 +349,7 @@
         if (players[index].wins > 0) {
             players[index].wins -= 1;
             updateUI();
+            pushToGitHub();
         }
     }
 
@@ -388,7 +372,6 @@
     }
 
     function updateUI() {
-        // Sort standings
         players.sort((a, b) => b.wins - a.wins);
 
         const tbody = document.getElementById('leaderboardBody');
@@ -397,16 +380,27 @@
         curseSelect.innerHTML = '';
 
         let currentRank = 1;
+        const goal = 50;
+
         players.forEach((p, index) => {
             if (index > 0 && p.wins < players[index - 1].wins) {
                 currentRank = index + 1;
             }
 
+            let percent = Math.min(Math.round((p.wins / goal) * 100), 100);
+
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>#${currentRank}</b></td>
-                <td>${p.name}</td>
-                <td>${p.wins}</td>
+                <td>
+                    <div class="player-info">
+                        <span><b>${p.name}</b></span>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percent}%;"></div>
+                        </div>
+                    </div>
+                </td>
+                <td><b>${p.wins}</b> <span style="font-size:0.75rem; color:#8b949e;">(${percent}%)</span></td>
                 ${currentUser && currentUser.isHost ? `
                 <td class="action-btns host-only" style="display: table-cell;">
                     <button class="btn-green" onclick="addWin(${index})">+1</button>
@@ -421,7 +415,6 @@
             curseSelect.appendChild(opt);
         });
 
-        // Update Milestones
         const topWins = players[0].wins;
         const agonyDiff = 50 - topWins;
         const tortureDiff = 100 - topWins;
@@ -435,21 +428,13 @@
             : `${tortureDiff} wins needed (${players[0].name} closest)`;
     }
 
-    function exportGitHubCode() {
-        const fullDoc = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-        const area = document.getElementById('exportArea');
-        area.style.display = 'block';
-        area.value = fullDoc;
-        area.select();
-        document.execCommand('copy');
-        alert("✅ Entire updated HTML code copied to clipboard!\n\nGo to your GitHub index.html file, click edit (pencil icon), replace all code, and click 'Commit changes'.");
-    }
-
-    // Initialize dropdown on load
     initLoginSelect();
 </script>
 
+</body>
+</html>
 
 
 
-</body></html>
+
+
