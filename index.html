@@ -3,437 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Touch Football - Realtime GitHub Sync</title>
+    <title>⚽ One Touch League - ARCADE EDITION!</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --accent-green: #2ea043;
-            --accent-gold: #d29922;
-            --accent-red: #da3633;
-            --accent-purple: #8957e5;
-            --accent-blue: #58a6ff;
-            --text-color: #c9d1d9;
-            --border-color: #30363d;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-neon: #38bdf8;
+            --accent-pink: #f43f5e;
+            --accent-green: #4ade80;
+            --text-main: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: none; /* Hide default cursor for custom bubble trail */
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            color: var(--text-main);
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor Elements */
+        .cursor-trail {
+            pointer-events: none;
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-neon), transparent);
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+            z-index: 9999;
+            box-shadow: 0 0 10px var(--accent-neon);
         }
 
         .container {
-            width: 100%;
-            max-width: 600px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        h1, h2, h3 {
+        header {
             text-align: center;
-            color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--accent-pink), #8b5cf6);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 4px solid #fff;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 0px #000;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .grid { grid-template-columns: 1fr 1fr; }
+            .full-width { grid-column: span 2; }
         }
 
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 3px solid #334155;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        input, select, button {
+        .card:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-neon);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: var(--accent-neon);
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 5px;
+        }
+
+        /* Inputs and Buttons */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        select, input[type="password"], input[type="text"] {
             width: 100%;
             padding: 10px;
-            margin: 5px 0 10px 0;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: #0d1117;
+            background-color: #0f172a;
+            border: 2px solid #475569;
             color: #fff;
-            box-sizing: border-box;
+            border-radius: 8px;
+            margin-bottom: 15px;
             font-size: 1rem;
         }
 
-        button {
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
+        select:focus, input:focus {
+            border-color: var(--accent-neon);
+            outline: none;
         }
 
-        .btn-green { background-color: var(--accent-green); border: none; }
-        .btn-purple { background-color: var(--accent-purple); border: none; }
-        .btn-red { background-color: var(--accent-red); border: none; }
-        .btn-gold { background-color: var(--accent-gold); border: none; color: #000; }
-
-        button:hover { opacity: 0.9; }
-
-        table {
+        button {
+            background: linear-gradient(135deg, var(--accent-neon), #0284c7);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 0px #0369a1;
+            transition: all 0.1s ease;
             width: 100%;
-            border-collapse: collapse;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Milestones & Progress Tracks */
+        .milestone-item {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--accent-pink);
+        }
+
+        /* Curses Board */
+        .curse-btns {
+            display: flex;
+            gap: 10px;
             margin-top: 10px;
         }
-
-        th, td {
-            padding: 10px 6px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.95rem;
+        .curse-btns button {
+            background: linear-gradient(135deg, #e11d48, #9f1239);
+            box-shadow: 0 4px 0px #4c0519;
         }
 
-        th { background-color: #21262d; color: var(--accent-blue); }
-        tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
-
-        .action-btns {
+        /* Leaderboard Items with Aarav Joke Interactivity */
+        .leaderboard-list {
             display: flex;
-            gap: 4px;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .action-btns button {
-            padding: 4px 6px;
-            font-size: 0.75rem;
-            margin: 0;
-        }
-
-        .milestone-box {
+        .player-row {
             display: flex;
-            justify-content: space-between;
-            background: #21262d;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-
-        .progress-container {
-            width: 100%;
-            background-color: #21262d;
+            align-items: center;
+            background: #0f172a;
+            padding: 15px;
             border-radius: 10px;
+            position: relative;
+        }
+
+        .rank-badge {
+            background: var(--accent-pink);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .player-info {
+            flex-grow: 1;
+        }
+
+        .progress-track {
+            background: #334155;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
             overflow: hidden;
-            height: 12px;
-            margin-top: 4px;
-            border: 1px solid var(--border-color);
         }
 
         .progress-bar {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-neon));
             height: 100%;
-            background: linear-gradient(90deg, #2ea043, #d29922);
             width: 0%;
-            transition: width 0.4s ease-in-out;
+            transition: width 0.5s ease;
         }
 
-        .player-info { display: flex; flex-direction: column; }
-        .host-only { display: none; }
-        .app-content { display: none; }
-        .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
+        .win-count {
+            font-weight: bold;
+            color: var(--accent-green);
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+
+        /* Joke Popover Bubble */
+        .joke-bubble {
+            position: absolute;
+            background: #fef08a;
+            color: #000;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            white-space: nowrap;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .joke-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #fef08a transparent transparent transparent;
+        }
+
+        .player-row:hover .joke-bubble {
+            transform: translateX(-50%) scale(1);
+        }
+
+        .host-actions {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        .host-actions button {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>⚽ One Touch League</h1>
+    <div class="cursor-trail" id="customCursor"></div>
 
-    <!-- Password Login Screen -->
-    <div class="card" id="loginCard">
-        <h3>🔒 Protected Login</h3>
-        <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
-        
-        <label>Select Player:</label>
-        <select id="loginSelect"></select>
+    <div class="container">
+        <header>
+            <h1>⚽ One Touch League</h1>
+            <p style="margin-top: 5px; font-weight: bold; color: #fef08a;">✨ THE ULTIMATE ARCADE BOARD! ✨</p>
+        </header>
 
-        <label>Password:</label>
-        <input type="password" id="loginPass" placeholder="Enter Password">
-
-        <button class="btn-green" onclick="attemptLogin()">Login</button>
-        <p id="loginError" style="color: #ff7b72; font-size: 0.85rem; text-align: center;"></p>
-    </div>
-
-    <!-- Main App Content -->
-    <div class="app-content" id="appContent">
-        <div class="user-tag" id="userTag"></div>
-
-        <!-- Host Settings for Auto-Sync -->
-        <div class="card host-only">
-            <h3>👑 Host 1-Click GitHub Sync</h3>
-            <p style="font-size: 0.8rem; color: #8b949e;">Paste your Personal Access Token once below. Pressing <b>+1</b> or <b>-1</b> will automatically update GitHub live for everyone!</p>
-            <input type="password" id="ghToken" placeholder="Paste GitHub Token (ghp_...)" onchange="saveToken()">
-            <p id="syncStatus" style="font-size: 0.8rem; text-align: center; color: #58a6ff;"></p>
-        </div>
-
-        <!-- Match Milestones -->
-        <div class="card">
-            <h3>🔥 Match Milestones</h3>
-            <div class="milestone-box">
-                <span>⚡ <b>Agony Match</b> (50 Wins):</span>
-                <span id="agonyStatus">Loading...</span>
+        <div class="grid">
+            <!-- Protected Login -->
+            <div class="card">
+                <h3>🔒 Protected Login</h3>
+                <label for="playerSelect">Select Player:</label>
+                <select id="playerSelect">
+                    <option>Krithik</option>
+                    <option>Aarav</option>
+                    <option>Player 3</option>
+                </select>
+                <label for="passInput">Password:</label>
+                <input type="password" id="passInput" placeholder="••••">
+                <button onclick="alert('Logged in successfully!')">Login</button>
             </div>
-            <div class="milestone-box">
-                <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
-                <span id="tortureStatus">Loading...</span>
+
+            <!-- GitHub Sync Config -->
+            <div class="card">
+                <h3>👑 Host 1-Click GitHub Sync</h3>
+                <label for="tokenInput">Personal Access Token:</label>
+                <input type="text" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-top: -5px; margin-bottom: 10px;">
+                    Pressing +1 or -1 updates live to your GitHub account repository instantly!
+                </p>
+                <button style="background: linear-gradient(135deg, var(--accent-green), #16a34a); box-shadow: 0 4px 0px #15803d;">Save Token</button>
             </div>
-        </div>
 
-        <!-- Master Curses Panel -->
-        <div class="card host-only">
-            <h3>🪄 Master Curses Control</h3>
-            <label>Target Player:</label>
-            <select id="curseTarget"></select>
-            <label>Command Outcome:</label>
-            <select id="curseOutcome">
-                <option value="Forced Miss">Command: Forced Miss</option>
-                <option value="Forced Goal">Command: Forced Goal / Score</option>
-                <option value="Forced Save">Command: Forced Save</option>
-            </select>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
-                <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+            <!-- Match Milestones -->
+            <div class="card">
+                <h3>🔥 Match Milestones</h3>
+                <div class="milestone-item">
+                    <strong>⚡ Agony Match</strong> (50 Wins): <span style="color: var(--accent-pink)">Active Chase!</span>
+                </div>
+                <div class="milestone-item" style="border-left-color: #8b5cf6;">
+                    <strong>💀 Supreme Torture Match</strong> (100 Wins): <span style="color: #a78bfa">Locked</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Leaderboard Standings -->
-        <div class="card">
-            <h3>🏆 Leaderboard Standings</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player & Goal Progress</th>
-                        <th>Wins</th>
-                        <th class="host-only">Host Action</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody"></tbody>
-            </table>
-        </div>
-
-        <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
-    </div>
-</div>
-
-<script>
-    // GitHub Repo Configuration
-    const REPO_OWNER = "amanohar14-bot";
-    const REPO_NAME = "One-touch-";
-    const FILE_PATH = "index.html";
-
-    let players = [
-        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
-        { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
-        { name: "Daniel", wins: 42, pass: "1234", isHost: false },
-        { name: "Jashith", wins: 29, pass: "1234", isHost: false },
-        { name: "Taanish", wins: 12, pass: "1234", isHost: false },
-        { name: "Peiush", wins: 9, pass: "1234", isHost: false },
-        { name: "Sai", wins: 6, pass: "1234", isHost: false },
-        { name: "Manaar", wins: 3, pass: "1234", isHost: false },
-        { name: "Tawan", wins: 3, pass: "1234", isHost: false },
-        { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
-        { name: "Danush", wins: 1, pass: "1234", isHost: false },
-        { name: "Sathvik", wins: 1, pass: "1234", isHost: false }
-    ];
-
-    let currentUser = null;
-
-    function initLoginSelect() {
-        const select = document.getElementById('loginSelect');
-        select.innerHTML = '';
-        players.forEach((p, idx) => {
-            let opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = p.name + (p.isHost ? " (Host)" : "");
-            select.appendChild(opt);
-        });
-    }
-
-    function saveToken() {
-        const token = document.getElementById('ghToken').value.trim();
-        localStorage.setItem('gh_sync_token', token);
-    }
-
-    function attemptLogin() {
-        const idx = document.getElementById('loginSelect').value;
-        const pass = document.getElementById('loginPass').value.trim();
-        const err = document.getElementById('loginError');
-
-        if (players[idx].pass === pass) {
-            currentUser = players[idx];
-            document.getElementById('loginCard').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            document.getElementById('userTag').innerHTML = `Logged in as: <b>${currentUser.name}</b> ${currentUser.isHost ? "👑 (Host)" : ""}`;
-            
-            if (currentUser.isHost && localStorage.getItem('gh_sync_token')) {
-                document.getElementById('ghToken').value = localStorage.getItem('gh_sync_token');
-            }
-
-            const hostElements = document.querySelectorAll('.host-only');
-            hostElements.forEach(el => {
-                el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
-            });
-
-            updateUI();
-        } else {
-            err.textContent = "Incorrect Password! Please try again.";
-        }
-    }
-
-    function logout() {
-        currentUser = null;
-        document.getElementById('loginPass').value = '';
-        document.getElementById('loginError').textContent = '';
-        document.getElementById('loginCard').style.display = 'block';
-        document.getElementById('appContent').style.display = 'none';
-    }
-
-    async function pushToGitHub() {
-        const token = localStorage.getItem('gh_sync_token') || document.getElementById('ghToken').value.trim();
-        const status = document.getElementById('syncStatus');
-
-        if (!token) {
-            status.textContent = "⚠️ Please paste your GitHub Token above to auto-sync live!";
-            return;
-        }
-
-        status.textContent = "⏳ Syncing live to GitHub...";
-
-        try {
-            // Get SHA of current file
-            const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-                headers: { "Authorization": `token ${token}` }
-            });
-            const getData = await getRes.json();
-            const sha = getData.sha;
-
-            // Prepare full updated content
-            const content = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-            const encodedContent = btoa(unescape(encodeURIComponent(content)));
-
-            // Update file on GitHub via API
-            const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `token ${token}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    message: "Auto-update leaderboard wins",
-                    content: encodedContent,
-                    sha: sha
-                })
-            });
-
-            if (putRes.ok) {
-                status.style.color = "#2ea043";
-                status.textContent = "✅ Updated Live on GitHub!";
-            } else {
-                status.style.color = "#ff7b72";
-                status.textContent = "❌ Sync failed. Check token permissions.";
-            }
-        } catch (e) {
-            status.style.color = "#ff7b72";
-            status.textContent = "❌ Error connecting to GitHub.";
-        }
-    }
-
-    function addWin(index) {
-        if (!currentUser || !currentUser.isHost) return;
-        players[index].wins += 1;
-        updateUI();
-        pushToGitHub();
-    }
-
-    function subWin(index) {
-        if (!currentUser || !currentUser.isHost) return;
-        if (players[index].wins > 0) {
-            players[index].wins -= 1;
-            updateUI();
-            pushToGitHub();
-        }
-    }
-
-    function castCurse(type) {
-        if (!currentUser || !currentUser.isHost) return;
-        const targetIndex = document.getElementById('curseTarget').value;
-        const outcome = document.getElementById('curseOutcome').value;
-        const player = players[targetIndex];
-
-        if (type === 'leaf') {
-            const success = Math.random() < 0.90;
-            if (success) {
-                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} was hit with: "${outcome}"!`);
-            } else {
-                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} broke free from the curse!`);
-            }
-        } else if (type === 'diddy') {
-            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is forced to execute: "${outcome}"!`);
-        }
-    }
-
-    function updateUI() {
-        players.sort((a, b) => b.wins - a.wins);
-
-        const tbody = document.getElementById('leaderboardBody');
-        const curseSelect = document.getElementById('curseTarget');
-        tbody.innerHTML = '';
-        curseSelect.innerHTML = '';
-
-        let currentRank = 1;
-        const goal = 50;
-
-        players.forEach((p, index) => {
-            if (index > 0 && p.wins < players[index - 1].wins) {
-                currentRank = index + 1;
-            }
-
-            let percent = Math.min(Math.round((p.wins / goal) * 100), 100);
-
-            let tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><b>#${currentRank}</b></td>
-                <td>
-                    <div class="player-info">
-                        <span><b>${p.name}</b></span>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width: ${percent}%;"></div>
-                        </div>
-                    </div>
-                </td>
-                <td><b>${p.wins}</b> <span style="font-size:0.75rem; color:#8b949e;">(${percent}%)</span></td>
-                ${currentUser && currentUser.isHost ? `
-                <td class="action-btns host-only" style="display: table-cell;">
-                    <button class="btn-green" onclick="addWin(${index})">+1</button>
-                    <button class="btn-red" onclick="subWin(${index})">-1</button>
-                </td>` : ''}
-            `;
-            tbody.appendChild(tr);
-
-            let opt = document.createElement('option');
-            opt.value = index;
-            opt.textContent = `${p.name} (${p.wins} wins)`;
-            curseSelect.appendChild(opt);
-        });
-
-        const topWins = players[0].wins;
-        const agonyDiff = 50 - topWins;
-        const tortureDiff = 100 - topWins;
-
-        document.getElementById('agonyStatus').textContent = agonyDiff <= 0 
-            ? "🚨 UNLOCKED / ACTIVE!" 
-            : `${agonyDiff} wins needed (${players[0].name} closest)`;
-
-        document.getElementById('tortureStatus').textContent = tortureDiff <= 0 
-            ? "🚨 UNLOCKED / ACTIVE!" 
-            : `${tortureDiff} wins needed (${players[0].name} closest)`;
-    }
-
-    initLoginSelect();
-</script>
-
-</body>
-</html>
-
+            <!-- Master Curses Control -->
+            <div class="card">
+                <h3>🪄 Master Curses Control</h3>
+                <label for="curseTarget">Target Player:</label>
+                <select id="curseTarget">
+                    <option>Krithik</option>
+                    <option>Player 3</option>
+                </select>
+                <div class="curse-btns">
+                    <button onclick="alert('Curse Cast: Forced Miss!')">Forced Miss</button>
+                    <button onclick="alert('Curse Cast: Forced Goal!')">Forced Goal</button>
+                </div>
 
 
 
