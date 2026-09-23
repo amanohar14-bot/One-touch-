@@ -13,7 +13,7 @@
             margin: 0;
         }
 
-        /* CURSOR FIXED: This ensures your normal mouse cursor stays visible! */
+        /* Fixed normal mouse cursor remains functional */
         * {
             cursor: auto !important;
         }
@@ -49,7 +49,6 @@
             padding-bottom: 8px;
         }
 
-        /* Inputs & Dropdowns */
         select, input {
             width: 100%;
             padding: 10px;
@@ -72,7 +71,6 @@
             text-transform: uppercase;
         }
 
-        /* Leaderboard Styling Fix */
         .player-card {
             background: #0f172a;
             padding: 15px;
@@ -98,7 +96,6 @@
             font-weight: bold;
         }
 
-        /* Fun Hover Jokes */
         .joke-text {
             position: absolute;
             background: #fef08a;
@@ -112,92 +109,175 @@
             display: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             white-space: nowrap;
+            z-index: 5;
         }
 
-        .player-card:hover {
-            border-color: #fef08a;
+        .player-card:hover { border-color: #fef08a; }
+        .player-card:hover .joke-text { display: block; }
+        .flex-group { display: flex; gap: 10px; }
+        
+        .score-controls {
+            display: none; /* Hidden until someone logs in successfully! */
+            gap: 5px;
+        }
+        .score-controls button {
+            padding: 5px 10px;
+            width: auto;
         }
 
-        .player-card:hover .joke-text {
-            display: block;
+        .unlocked .score-controls {
+            display: flex !important;
         }
 
-        .flex-group {
-            display: flex;
-            gap: 10px;
+        #loginStatus {
+            margin-top: -5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
     </style>
+
+    <!-- Connect Core Firebase Modules -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getDatabase, ref, onValue, set } from "https://gstatic.com";
+
+        // ⚠️ STEP 4: REPLACE THIS CONFIG WITH YOUR EXACT COPIED CODES FROM FIREBASE!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_://firebaseapp.com",
+            databaseURL: "https://YOUR_://firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_://appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
+        };
+
+        // Boot up Firebase connections
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const scoresRef = ref(db, 'league/scores');
+
+        // Initial default starting points for your full friend crew
+        const initialFriends = {
+            "daniel": 49, "aksuman": 47, "jashth": 22, "aarav": 18, 
+            "thanish": 16, "peuish": 9, "tawan": 7, "mahi": 4, 
+            "manar": 3, "danush": 2, "sathvik": 1, "krithik": 1, "muhamed": 1
+        };
+
+        // Track who is logged in globally
+        let isLoggedIn = false;
+
+        // Password matching rule logic
+        window.checkLogin = function() {
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('passInput').value;
+            const statusText = document.getElementById('loginStatus');
+            const boardContainer = document.getElementById('leaderboardContent');
+
+            if (user === 'aarav' && pass === '0105') {
+                statusText.innerText = "✅ Unlocked: Welcome Back Aarav!";
+                statusText.style.color = "#4ade80";
+                boardContainer.classList.add('unlocked');
+                isLoggedIn = true;
+            } else if (user !== 'aarav' && pass === '1234') {
+                statusText.innerText = `✅ Unlocked: Logged in as ${user.toUpperCase()}!`;
+                statusText.style.color = "#4ade80";
+                boardContainer.classList.add('unlocked');
+                isLoggedIn = true;
+            } else {
+                statusText.innerText = "❌ Incorrect Password! Try again.";
+                statusText.style.color = "#ef4444";
+                boardContainer.classList.remove('unlocked');
+                isLoggedIn = false;
+            }
+        };
+
+        // Realtime Listener: Draws and re-orders the board live
+        onValue(scoresRef, (snapshot) => {
+            const data = snapshot.val();
+            
+            if (!data) {
+                set(scoresRef, initialFriends);
+                return;
+            }
+
+            const sortedArray = Object.keys(data).map(name => ({
+                name: name,
+                wins: data[name]
+            })).sort((a, b) => b.wins - a.wins);
+
+            const board = document.getElementById('leaderboardContent');
+            board.innerHTML = '';
+
+            sortedArray.forEach((player, index) => {
+                const prefix = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "🏃 ";
+                const isAarav = player.name.toLowerCase() === 'aarav';
+                const customJoke = isAarav ? "👑 The Undisputed Leader!" : "😜 Aarav is better than u and u and u!";
+
+                const cardHtml = `
+                    <div class="player-card">
+                        <div class="joke-text">${customJoke}</div>
+                        <div class="player-name">${prefix} ${player.name.toUpperCase()}</div>
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <div class="wins-badge">${player.wins} Wins</div>
+                            <div class="score-controls">
+                                <button style="background:#22c55e;" onclick="updateWins('${player.name}', 1)">+</button>
+                                <button style="background:#ef4444; color:white;" onclick="updateWins('${player.name}', -1)">-</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                board.innerHTML += cardHtml;
+            });
+        });
+
+        // Handler to push changes to Firebase database
+        window.updateWins = function(playerName, adjustment) {
+            if(!isLoggedIn) return; // Block changes if not validated
+            onValue(ref(db, `league/scores/${playerName}`), (snap) => {
+                const current = snap.val() || 0;
+                const newScore = Math.max(0, current + adjustment);
+                set(ref(db, `league/scores/${playerName}`), newScore);
+            }, { onlyOnce: true });
+        }
+    </script>
 </head>
 <body>
 
     <div class="container">
         <header>
             <h1>⚽ One Touch League</h1>
-            <p style="margin: 5px 0 0 0; color: #fef08a; font-weight: bold;">Fun Arcade Edition</p>
+            <p style="margin: 5px 0 0 0; color: #fef08a; font-weight: bold;">⚡ REAL-TIME LIVE SCOREBOARD ⚡</p>
         </header>
 
-        <!-- Leaderboard (Put First to See it Instantly) -->
+        <!-- Live Score Tracking Box -->
         <div class="box">
             <h3>🏆 Leaderboard Standings (Race to 50 Wins)</h3>
-            
-            <!-- Aarav -->
-            <div class="player-card">
-                <div class="joke-text">😜 Aarav is better than u and u and u!</div>
-                <div class="player-name">👑 Aarav</div>
-                <div class="wins-badge">42 Wins</div>
-            </div>
-
-            <!-- Krithik -->
-            <div class="player-card">
-                <div class="joke-text">🤫 Aarav is better than u!</div>
-                <div class="player-name">🔥 Krithik</div>
-                <div class="wins-badge">1 Win</div>
-            </div>
-
-            <!-- Player 3 -->
-            <div class="player-card">
-                <div class="joke-text">🤣 Aarav is way better than u!</div>
-                <div class="player-name">👾 Player 3</div>
-                <div class="wins-badge">0 Wins</div>
+            <div id="leaderboardContent">
+                <p style="padding:15px; color:#94a3b8;">Connecting to Realtime Cloud database...</p>
             </div>
         </div>
 
-        <!-- Protected Login -->
+        <!-- Protected Login Layout -->
         <div class="box">
             <h3>🔒 Protected Login</h3>
-            <select>
-                <option>Aarav</option>
-                <option>Krithik</option>
-                <option>Player 3</option>
-            </select>
-            <input type="password" placeholder="Enter Password">
-            <button onclick="alert('Logged in!')">Login</button>
-        </div>
-
-        <!-- GitHub Sync Config -->
-        <div class="box">
-            <h3>👑 Host 1-Click GitHub Sync</h3>
-            <input type="text" placeholder="Paste GitHub Token here (ghp_...)">
-            <button style="background: #4ade80;">Save Sync Token</button>
-        </div>
-
-        <!-- Master Curses Control -->
-        <div class="box">
-            <h3>🪄 Master Curses Control</h3>
-            <select>
-                <option>Krithik</option>
-                <option>Player 3</option>
-            </select>
-            <div class="flex-group">
-                <button style="background: #ef4444; color: white;" onclick="alert('Curse Set: Forced Miss')">Forced Miss</button>
-                <button style="background: #22c55e; color: white;" onclick="alert('Curse Set: Forced Goal')">Forced Goal</button>
-            </div>
-        </div>
-    </div>
-
-</body>
-</html>
-
+            <div id="loginStatus">🔐 Status: Locked (Log in to update scores)</div>
+            
+            <label style="display:block; margin-bottom:5px; font-weight:bold;">Select Your Name:</label>
+            <select id="loginUser">
+                <option value="aarav">aarav</option>
+                <option value="daniel">daniel</option>
+                <option value="aksuman">aksuman</option>
+                <option value="jashth">jashth</option>
+                <option value="thanish">thanish</option>
+                <option value="peuish">peuish</option>
+                <option value="tawan">tawan</option>
+                <option value="mahi">mahi</option>
+                <option value="manar">manar</option>
+                <option value="danush">danush</option>
+                <option value="sathvik">sathvik</option>
+                <option value="krithik">krithik</option>
 
 
 
