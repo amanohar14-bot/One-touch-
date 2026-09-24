@@ -3,281 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚽ One Touch League</title>
+    <title>One Touch Football - Live Firebase Leaderboard</title>
+    <!-- Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        body {
-            background-color: #121824;
-            color: #ffffff;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 20px;
-            margin: 0;
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-green: #2ea043;
+            --accent-gold: #d29922;
+            --accent-red: #da3633;
+            --accent-purple: #8957e5;
+            --accent-blue: #58a6ff;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
         }
 
-        /* Fixed normal mouse cursor remains functional */
-        * {
-            cursor: auto !important;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
         }
 
-        header {
+        h1, h2, h3 {
             text-align: center;
-            background: #e11d48;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: #ffffff;
+            margin-bottom: 10px;
         }
 
-        h1 { margin: 0; font-size: 2rem; }
-        
-        .box {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 2px solid #334155;
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
         }
 
-        h3 {
-            margin-top: 0;
-            color: #38bdf8;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 8px;
-        }
-
-        select, input {
+        input, select, button {
             width: 100%;
             padding: 10px;
-            background: #0f172a;
-            border: 1px solid #475569;
-            color: white;
+            margin: 5px 0 10px 0;
             border-radius: 6px;
-            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            background-color: #0d1117;
+            color: #fff;
             box-sizing: border-box;
+            font-size: 1rem;
         }
 
         button {
-            background: #38bdf8;
-            color: #0f172a;
+            cursor: pointer;
             font-weight: bold;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-green { background-color: var(--accent-green); border: none; }
+        .btn-purple { background-color: var(--accent-purple); border: none; }
+        .btn-red { background-color: var(--accent-red); border: none; }
+        .btn-gold { background-color: var(--accent-gold); border: none; color: #000; }
+
+        button:hover { opacity: 0.9; }
+
+        table {
             width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 10px 6px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        th { background-color: #21262d; color: var(--accent-blue); }
+        tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
+
+        .action-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btns button {
+            padding: 4px 6px;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .milestone-box {
+            display: flex;
+            justify-content: space-between;
+            background: #21262d;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .dream-team-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .dream-card {
+            background: #21262d;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .dream-card .role {
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            font-weight: bold;
             text-transform: uppercase;
         }
 
-        .player-card {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            border: 1px solid #334155;
-        }
-
-        .player-name {
-            font-size: 1.2rem;
+        .dream-card .player-name {
+            font-size: 1rem;
             font-weight: bold;
+            color: #fff;
+            margin-top: 2px;
         }
 
-        .wins-badge {
-            background: #4ade80;
-            color: #0f172a;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: bold;
+        .progress-container {
+            width: 100%;
+            background-color: #21262d;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 12px;
+            margin-top: 4px;
+            border: 1px solid var(--border-color);
         }
 
-        .joke-text {
-            position: absolute;
-            background: #fef08a;
-            color: #000;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            top: -25px;
-            left: 20px;
-            display: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            white-space: nowrap;
-            z-index: 5;
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2ea043, #d29922);
+            width: 0%;
+            transition: width 0.4s ease-in-out;
         }
 
-        .player-card:hover { border-color: #fef08a; }
-        .player-card:hover .joke-text { display: block; }
-        .flex-group { display: flex; gap: 10px; }
-        
-        .score-controls {
-            display: none; /* Hidden until someone logs in successfully! */
-            gap: 5px;
-        }
-        .score-controls button {
-            padding: 5px 10px;
-            width: auto;
-        }
-
-        .unlocked .score-controls {
-            display: flex !important;
-        }
-
-        #loginStatus {
-            margin-top: -5px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
+        .player-info { display: flex; flex-direction: column; }
+        .host-only { display: none; }
+        .app-content { display: none; }
+        .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
     </style>
-
-    <!-- Connect Core Firebase Modules -->
-    <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getDatabase, ref, onValue, set } from "https://gstatic.com";
-
-        // ⚠️ STEP 4: REPLACE THIS CONFIG WITH YOUR EXACT COPIED CODES FROM FIREBASE!
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_://firebaseapp.com",
-            databaseURL: "https://YOUR_://firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_://appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
-        };
-
-        // Boot up Firebase connections
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const scoresRef = ref(db, 'league/scores');
-
-        // Initial default starting points for your full friend crew
-        const initialFriends = {
-            "daniel": 49, "aksuman": 47, "jashth": 22, "aarav": 18, 
-            "thanish": 16, "peuish": 9, "tawan": 7, "mahi": 4, 
-            "manar": 3, "danush": 2, "sathvik": 1, "krithik": 1, "muhamed": 1
-        };
-
-        // Track who is logged in globally
-        let isLoggedIn = false;
-
-        // Password matching rule logic
-        window.checkLogin = function() {
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('passInput').value;
-            const statusText = document.getElementById('loginStatus');
-            const boardContainer = document.getElementById('leaderboardContent');
-
-            if (user === 'aarav' && pass === '0105') {
-                statusText.innerText = "✅ Unlocked: Welcome Back Aarav!";
-                statusText.style.color = "#4ade80";
-                boardContainer.classList.add('unlocked');
-                isLoggedIn = true;
-            } else if (user !== 'aarav' && pass === '1234') {
-                statusText.innerText = `✅ Unlocked: Logged in as ${user.toUpperCase()}!`;
-                statusText.style.color = "#4ade80";
-                boardContainer.classList.add('unlocked');
-                isLoggedIn = true;
-            } else {
-                statusText.innerText = "❌ Incorrect Password! Try again.";
-                statusText.style.color = "#ef4444";
-                boardContainer.classList.remove('unlocked');
-                isLoggedIn = false;
-            }
-        };
-
-        // Realtime Listener: Draws and re-orders the board live
-        onValue(scoresRef, (snapshot) => {
-            const data = snapshot.val();
-            
-            if (!data) {
-                set(scoresRef, initialFriends);
-                return;
-            }
-
-            const sortedArray = Object.keys(data).map(name => ({
-                name: name,
-                wins: data[name]
-            })).sort((a, b) => b.wins - a.wins);
-
-            const board = document.getElementById('leaderboardContent');
-            board.innerHTML = '';
-
-            sortedArray.forEach((player, index) => {
-                const prefix = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : "🏃 ";
-                const isAarav = player.name.toLowerCase() === 'aarav';
-                const customJoke = isAarav ? "👑 The Undisputed Leader!" : "😜 Aarav is better than u and u and u!";
-
-                const cardHtml = `
-                    <div class="player-card">
-                        <div class="joke-text">${customJoke}</div>
-                        <div class="player-name">${prefix} ${player.name.toUpperCase()}</div>
-                        <div style="display:flex; align-items:center; gap:15px;">
-                            <div class="wins-badge">${player.wins} Wins</div>
-                            <div class="score-controls">
-                                <button style="background:#22c55e;" onclick="updateWins('${player.name}', 1)">+</button>
-                                <button style="background:#ef4444; color:white;" onclick="updateWins('${player.name}', -1)">-</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                board.innerHTML += cardHtml;
-            });
-        });
-
-        // Handler to push changes to Firebase database
-        window.updateWins = function(playerName, adjustment) {
-            if(!isLoggedIn) return; // Block changes if not validated
-            onValue(ref(db, `league/scores/${playerName}`), (snap) => {
-                const current = snap.val() || 0;
-                const newScore = Math.max(0, current + adjustment);
-                set(ref(db, `league/scores/${playerName}`), newScore);
-            }, { onlyOnce: true });
-        }
-    </script>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>⚽ One Touch League</h1>
-            <p style="margin: 5px 0 0 0; color: #fef08a; font-weight: bold;">⚡ REAL-TIME LIVE SCOREBOARD ⚡</p>
-        </header>
+<div class="container">
+    <h1>⚽ One Touch League</h1>
 
-        <!-- Live Score Tracking Box -->
-        <div class="box">
-            <h3>🏆 Leaderboard Standings (Race to 50 Wins)</h3>
-            <div id="leaderboardContent">
-                <p style="padding:15px; color:#94a3b8;">Connecting to Realtime Cloud database...</p>
+    <!-- Password Login Screen -->
+    <div class="card" id="loginCard">
+        <h3>🔒 Protected Login</h3>
+        <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
+        
+        <label>Select Player:</label>
+        <select id="loginSelect"></select>
+
+        <label>Password:</label>
+        <input type="password" id="loginPass" placeholder="Enter Password">
+
+        <button class="btn-green" onclick="attemptLogin()">Login</button>
+        <p id="loginError" style="color: #ff7b72; font-size: 0.85rem; text-align: center;"></p>
+    </div>
+
+    <!-- Main App Content -->
+    <div class="app-content" id="appContent">
+        <div class="user-tag" id="userTag"></div>
+
+        <!-- Dream 5 Team & Honorable Mention -->
+        <div class="card">
+            <h3>🌟 Dream 5 XI & Mentions</h3>
+            <div class="dream-team-grid">
+                <div class="dream-card">
+                    <div class="role">⚽ Striker (ST)</div>
+                    <div class="player-name">Taanish</div>
+                </div>
+                <div class="dream-card">
+                    <div class="role">⚡ Right Wing (RW)</div>
+                    <div class="player-name">Akshuman</div>
+                </div>
+                <div class="dream-card">
+                    <div class="role">⚡ Left Wing (LW)</div>
+                    <div class="player-name">Daniel</div>
+                </div>
+                <div class="dream-card">
+                    <div class="role">🧤 Goalkeeper (GK)</div>
+                    <div class="player-name">Aarav</div>
+                </div>
+            </div>
+            <div class="dream-card" style="margin-top: 10px; background: #1c2128;">
+                <div class="role" style="color: #58a6ff;">🏅 Honorable Mention</div>
+                <div class="player-name">Peiush</div>
             </div>
         </div>
 
-        <!-- Protected Login Layout -->
-        <div class="box">
-            <h3>🔒 Protected Login</h3>
-            <div id="loginStatus">🔐 Status: Locked (Log in to update scores)</div>
+        <!-- Match Milestones -->
+        <div class="card">
+            <h3>🔥 Match Milestones</h3>
+            <div class="milestone-box">
+                <span>⚡ <b>Agony Match</b> (50 Wins):</span>
+                <span id="agonyStatus">Loading...</span>
+            </div>
+            <div class="milestone-box">
+                <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
+                <span id="tortureStatus">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Master Curses Panel -->
+        <div class="card host-only">
+            <h3>🪄 Master Curses Control</h3>
+            <label>Target Player:</label>
+            <select id="curseTarget"></select>
+            <label>Command Outcome:</label>
+            <select id="curseOutcome">
+                <option value="Forced Miss">Command: Forced Miss</option>
+                <option value="Forced Goal">Command: Forced Goal / Score</option>
+                <option value="Forced Save">Command: Forced Save</option>
+            </select>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
+                <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Standings -->
+        <div class="card">
+            <h3>🏆 Leaderboard Standings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player & Goal Progress</th>
+                        <th>Wins</th>
+                        <th class="host-only">Host Action</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody"></tbody>
+            </table>
+        </div>
+
+        <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
+    </div>
+</div>
+
+<script>
+    // 1. PASTE YOUR FIREBASE REALTIME DATABASE URL HERE:
+    const FIREBASE_DB_URL = https://one-touch-leaderboard-default-rtdb.firebaseio.com/:null;
+
+    let db = null;
+    if (FIREBASE_DB_URL && !FIREBASE_DB_URL.includes("PASTE_YOUR")) {
+        firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
+        db = firebase.database();
+    }
+
+    let defaultPlayers = [
+        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
+        { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
+        { name: "Daniel", wins: 42, pass: "1234", isHost: false },
+        { name: "Jashith", wins: 29, pass: "1234", isHost: false },
+        { name: "Taanish", wins: 12, pass: "1234", isHost: false },
+        { name: "Peiush", wins: 9, pass: "1234", isHost: false },
+        { name: "Sai", wins: 6, pass: "1234", isHost: false },
+        { name: "Manaar", wins: 3, pass: "1234", isHost: false },
+        { name: "Tawan", wins: 3, pass: "1234", isHost: false },
+        { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
+        { name: "Danush", wins: 1, pass: "1234", isHost: false },
+        { name: "Sathvik", wins: 1, pass: "1234", isHost: false },
+        { name: "Krithik", wins: 1, pass: "1234", isHost: false }
+    ];
+
+    let players = [...defaultPlayers];
+    let currentUser = null;
+
+    // Listen for Realtime Updates from Firebase if URL is set
+    if (db) {
+        db.ref("leaderboard").on("value", (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                players = data;
+            } else {
+                db.ref("leaderboard").set(defaultPlayers);
+                players = [...defaultPlayers];
+            }
+            initLoginSelect();
+            if (currentUser) updateUI();
+        });
+    }
+
+    function initLoginSelect() {
+        const select = document.getElementById('loginSelect');
+        const selectedVal = select.value;
+        select.innerHTML = '';
+        players.forEach((p, idx) => {
+            let opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = p.name + (p.isHost ? " (Host)" : "");
+            select.appendChild(opt);
+        });
+        if (selectedVal) select.value = selectedVal;
+    }
+
+    function attemptLogin() {
+        const idx = document.getElementById('loginSelect').value;
+        const pass = document.getElementById('loginPass').value.trim();
+        const err = document.getElementById('loginError');
+
+        if (players[idx].pass === pass) {
+            currentUser = players[idx];
+            document.getElementById('loginCard').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            document.getElementById('userTag').innerHTML = `Logged in as: <b>${currentUser.name}</b> ${currentUser.isHost ? "👑 (Host)" : ""}`;
             
-            <label style="display:block; margin-bottom:5px; font-weight:bold;">Select Your Name:</label>
-            <select id="loginUser">
-                <option value="aarav">aarav</option>
-                <option value="daniel">daniel</option>
-                <option value="aksuman">aksuman</option>
-                <option value="jashth">jashth</option>
-                <option value="thanish">thanish</option>
-                <option value="peuish">peuish</option>
-                <option value="tawan">tawan</option>
-                <option value="mahi">mahi</option>
-                <option value="manar">manar</option>
-                <option value="danush">danush</option>
-                <option value="sathvik">sathvik</option>
-                <option value="krithik">krithik</option>
+            const hostElements = document.querySelectorAll('.host-only');
+            hostElements.forEach(el => {
+                el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
+            });
+
+            updateUI();
+        } else {
+            err.textContent = "Incorrect Password! Please try again.";
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginError').textContent = '';
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('appContent').style.display = 'none';
+    }
+
+    function saveData() {
+        if (db) {
+            db.ref("leaderboard").set(players);
+        } else {
+            updateUI();
+        }
+    }
+
+    function addWin(originalIndex) {
+        if (!currentUser || !currentUser.isHost) return;
+        players[originalIndex].wins += 1;
+        saveData();
+    }
+
+    function subWin(originalIndex) {
+        if (!currentUser || !currentUser.isHost) return;
+        if (players[originalIndex].wins > 0) {
+            players[originalIndex].wins -= 1;
+            saveData();
+        }
+    }
+
+    function castCurse(type) {
+        if (!currentUser || !currentUser.isHost) return;
+        const targetIndex = document.getElementById('curseTarget').value;
+        const outcome = document.getElementById('curseOutcome').value;
+        const player = players[targetIndex];
+
+        if (type === 'leaf') {
+            const success = Math.random() < 0.90;
+            if (success) {
+                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} was hit with: "${outcome}"!`);
+            } else {
+                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} broke free from the curse!`);
+            }
+        } else if (type === 'diddy') {
+            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is forced to execute: "${outcome}"!`);
+        }
+    }
+
+    function updateUI() {
+        let sorted = [...players].sort((a, b) => b.wins - a.wins);
+
+        const tbody = document.getElementById('leaderboardBody');
+        const curseSelect = document.getElementById('curseTarget');
+        tbody.innerHTML = '';
+        curseSelect.innerHTML = '';
+
+        let currentRank = 1;
+        const goal = 50;
+
+        sorted.forEach((p, index) => {
+            if (index > 0 && p.wins < sorted[index - 1].wins) {
+                currentRank = index + 1;
+            }
+
+            let percent = Math.min(Math.round((p.wins / goal) * 100), 100);
+            let origIndex = players.findIndex(orig => orig.name === p.name);
+
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><b>#${currentRank}</b></td>
+                <td>
+                    <div class="player-info">
+                        <span><b>${p.name}</b></span>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percent}%;"></div>
+                        </div>
+                    </div>
+                </td>
+                <td><b>${p.wins}</b> <span style="font-size:0.75rem; color:#8b949e;">(${percent}%)</span></td>
+                ${currentUser && currentUser.isHost ? `
+                <td class="action-btns host-only" style="display: table-cell;">
+                    <button class="btn-green" onclick="addWin(${origIndex})">+1</button>
+                    <button class="btn-red" onclick="subWin(${origIndex})">-1</button>
+                </td>` : ''}
+            `;
+            tbody.appendChild(tr);
+
+            let opt = document.createElement('option');
+            opt.value = origIndex;
+            opt.textContent = `${p.name} (${p.wins} wins)`;
+            curseSelect.appendChild(opt);
+        });
+
+        const topWins = sorted[0].wins;
+        const agonyDiff = 50 - topWins;
+        const tortureDiff = 100 - topWins;
+
+        document.getElementById('agonyStatus').textContent = agonyDiff <= 0 
+            ? "🚨 UNLOCKED / ACTIVE!" 
+            : `${agonyDiff} wins needed (${sorted[0].name} closest)`;
+
+        document.getElementById('tortureStatus').textContent = tortureDiff <= 0 
+            ? "🚨 UNLOCKED / ACTIVE!" 
+            : `${tortureDiff} wins needed (${sorted[0].name} closest)`;
+    }
+
+    initLoginSelect();
+</script>
+
+</body>
+</html>
 
 
 
