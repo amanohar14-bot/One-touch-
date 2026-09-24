@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Touch Football - Live Firebase Leaderboard</title>
+    <title>One Touch Football - Live Leaderboard</title>
     <!-- Firebase JS SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -71,7 +71,6 @@
         .btn-green { background-color: var(--accent-green); border: none; }
         .btn-purple { background-color: var(--accent-purple); border: none; }
         .btn-red { background-color: var(--accent-red); border: none; }
-        .btn-gold { background-color: var(--accent-gold); border: none; color: #000; }
 
         button:hover { opacity: 0.9; }
 
@@ -266,14 +265,8 @@
 </div>
 
 <script>
-    // 1. PASTE YOUR FIREBASE REALTIME DATABASE URL HERE:
-    const FIREBASE_DB_URL = https://one-touch-leaderboard-default-rtdb.firebaseio.com/;
-
-    let db = null;
-    if (FIREBASE_DB_URL && !FIREBASE_DB_URL.includes("PASTE_YOUR")) {
-        firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
-        db = firebase.database();
-    }
+    // Database URL string
+    const FIREBASE_DB_URL = "https://one-touch-leaderboard-default-rtdb.firebaseio.com/";
 
     let defaultPlayers = [
         { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
@@ -294,24 +287,9 @@
     let players = [...defaultPlayers];
     let currentUser = null;
 
-    // Listen for Realtime Updates from Firebase if URL is set
-    if (db) {
-        db.ref("leaderboard").on("value", (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                players = data;
-            } else {
-                db.ref("leaderboard").set(defaultPlayers);
-                players = [...defaultPlayers];
-            }
-            initLoginSelect();
-            if (currentUser) updateUI();
-        });
-    }
-
-    function initLoginSelect() {
+    function populateDropdown() {
         const select = document.getElementById('loginSelect');
-        const selectedVal = select.value;
+        if (!select) return;
         select.innerHTML = '';
         players.forEach((p, idx) => {
             let opt = document.createElement('option');
@@ -319,7 +297,31 @@
             opt.textContent = p.name + (p.isHost ? " (Host)" : "");
             select.appendChild(opt);
         });
-        if (selectedVal) select.value = selectedVal;
+    }
+
+    // Force populate dropdown as soon as script loads
+    populateDropdown();
+
+    let db = null;
+    if (FIREBASE_DB_URL && FIREBASE_DB_URL.startsWith("https://")) {
+        try {
+            firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
+            db = firebase.database();
+
+            db.ref("leaderboard").on("value", (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    players = data;
+                } else {
+                    db.ref("leaderboard").set(defaultPlayers);
+                    players = [...defaultPlayers];
+                }
+                populateDropdown();
+                if (currentUser) updateUI();
+            });
+        } catch (e) {
+            console.error("Firebase failed to initialize:", e);
+        }
     }
 
     function attemptLogin() {
@@ -327,7 +329,7 @@
         const pass = document.getElementById('loginPass').value.trim();
         const err = document.getElementById('loginError');
 
-        if (players[idx].pass === pass) {
+        if (players[idx] && players[idx].pass === pass) {
             currentUser = players[idx];
             document.getElementById('loginCard').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
@@ -355,9 +357,8 @@
     function saveData() {
         if (db) {
             db.ref("leaderboard").set(players);
-        } else {
-            updateUI();
         }
+        updateUI();
     }
 
     function addWin(originalIndex) {
@@ -449,8 +450,6 @@
             ? "🚨 UNLOCKED / ACTIVE!" 
             : `${tortureDiff} wins needed (${sorted[0].name} closest)`;
     }
-
-    initLoginSelect();
 </script>
 
 </body>
