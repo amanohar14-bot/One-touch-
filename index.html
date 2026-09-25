@@ -15,7 +15,7 @@
             --accent-gold: #d29922;
             --accent-red: #da3633;
             --accent-purple: #8957e5;
-            --accent-blue: #58a6ff;
+            --accent-blue: #007aff;
             --text-color: #c9d1d9;
             --border-color: #30363d;
         }
@@ -87,7 +87,7 @@
             font-size: 0.95rem;
         }
 
-        th { background-color: #21262d; color: var(--accent-blue); }
+        th { background-color: #21262d; color: #58a6ff; }
         tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
 
         .action-btns {
@@ -161,6 +161,122 @@
         .host-only { display: none; }
         .app-content { display: none; }
         .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
+
+        .online-dot {
+            height: 9px;
+            width: 9px;
+            background-color: #2ea043;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+            box-shadow: 0 0 6px #2ea043;
+        }
+
+        .online-box {
+            background: #1f242c;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: #8b949e;
+        }
+
+        /* iMessage Chat UI */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+            background-color: #000;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 5px;
+        }
+
+        .msg-bubble {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .msg-sent {
+            align-self: flex-end;
+            background-color: #007aff;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-received {
+            align-self: flex-start;
+            background-color: #262628;
+            color: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-sender {
+            font-size: 0.7rem;
+            color: #8e8e93;
+            margin-bottom: 2px;
+            margin-left: 4px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            margin: 0;
+            border-radius: 20px;
+            background-color: #1c1c1e;
+            border: 1px solid #3a3a3c;
+            padding: 8px 14px;
+        }
+
+        .chat-input-area button {
+            width: auto;
+            margin: 0;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #007aff;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .anthem-card {
+            background: linear-gradient(145deg, #1f242d, #161b22);
+            border: 1px solid var(--accent-gold);
+            text-align: center;
+        }
+
+        .anthem-lyrics {
+            font-style: italic;
+            font-size: 1rem;
+            color: #f1e05a;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -186,6 +302,11 @@
     <!-- Main App Content -->
     <div class="app-content" id="appContent">
         <div class="user-tag" id="userTag"></div>
+
+        <!-- Online Players List -->
+        <div class="online-box">
+            🟢 <b>Online Now:</b> <span id="onlineList">Checking...</span>
+        </div>
 
         <!-- Dream 5 Team & Honorable Mention -->
         <div class="card">
@@ -242,6 +363,7 @@
                 <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
                 <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
             </div>
+            <button class="btn-green" onclick="clearCurse()" style="margin-top: 8px;">✨ Clear Selected Player Curse</button>
         </div>
 
         <!-- Leaderboard Standings -->
@@ -260,31 +382,55 @@
             </table>
         </div>
 
+        <!-- iMessage Chat Panel -->
+        <div class="card">
+            <h3>💬 iMessage Chat</h3>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="iMessage" onkeydown="if(event.key === 'Enter') sendMessage()">
+                    <button onclick="sendMessage()">⬆</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- National Anthem -->
+        <div class="card anthem-card">
+            <h3>🥔 One Touch National Anthem</h3>
+            <p style="font-size: 0.75rem; color: #8b949e; margin: 0;">(To the tune of "You Are My Sunshine")</p>
+            <div class="anthem-lyrics">
+                "We like potatoes, we like doritos,<br>
+                We hate tomatoes, we like potato,<br>
+                We like doritos, potato, potatoes,<br>
+                Potatoes!" 🎶
+            </div>
+        </div>
+
         <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
     </div>
 </div>
 
 <script>
-    // Database URL string
     const FIREBASE_DB_URL = "https://one-touch-leaderboard-default-rtdb.firebaseio.com/";
 
     let defaultPlayers = [
-        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
-        { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
-        { name: "Daniel", wins: 42, pass: "1234", isHost: false },
-        { name: "Jashith", wins: 29, pass: "1234", isHost: false },
-        { name: "Taanish", wins: 12, pass: "1234", isHost: false },
-        { name: "Peiush", wins: 9, pass: "1234", isHost: false },
-        { name: "Sai", wins: 6, pass: "1234", isHost: false },
-        { name: "Manaar", wins: 3, pass: "1234", isHost: false },
-        { name: "Tawan", wins: 3, pass: "1234", isHost: false },
-        { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
-        { name: "Danush", wins: 1, pass: "1234", isHost: false },
-        { name: "Sathvik", wins: 1, pass: "1234", isHost: false },
-        { name: "Krithik", wins: 1, pass: "1234", isHost: false }
+        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true, activeCurse: null },
+        { name: "Akshuman", wins: 42, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Daniel", wins: 42, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Jashith", wins: 29, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Taanish", wins: 12, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Peiush", wins: 9, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Sai", wins: 6, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Manaar", wins: 3, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Tawan", wins: 3, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Muhamed", wins: 1, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Danush", wins: 1, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Sathvik", wins: 1, pass: "1234", isHost: false, activeCurse: null },
+        { name: "Krithik", wins: 1, pass: "1234", isHost: false, activeCurse: null }
     ];
 
     let players = [...defaultPlayers];
+    let onlineUsers = {};
     let currentUser = null;
 
     function populateDropdown() {
@@ -299,7 +445,6 @@
         });
     }
 
-    // Force populate dropdown as soon as script loads
     populateDropdown();
 
     let db = null;
@@ -308,6 +453,7 @@
             firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
             db = firebase.database();
 
+            // Sync Leaderboard
             db.ref("leaderboard").on("value", (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -317,11 +463,55 @@
                     players = [...defaultPlayers];
                 }
                 populateDropdown();
-                if (currentUser) updateUI();
+                if (currentUser) {
+                    const freshUser = players.find(p => p.name === currentUser.name);
+                    if (freshUser) currentUser = freshUser;
+                    checkCurseAlert();
+                    updateUI();
+                }
             });
+
+            // Sync Presence
+            db.ref("online").on("value", (snapshot) => {
+                onlineUsers = snapshot.val() || {};
+                renderOnlineStatus();
+            });
+
+            // Sync iMessage Chat
+            db.ref("chat").on("value", (snapshot) => {
+                const messages = snapshot.val();
+                renderChat(messages);
+            });
+
         } catch (e) {
             console.error("Firebase failed to initialize:", e);
         }
+    }
+
+    function setupPresence() {
+        if (!db || !currentUser) return;
+
+        const userPresenceRef = db.ref(`online/${currentUser.name.replace(/[^a-zA-Z0-9]/g, "_")}`);
+        const connectedRef = db.ref(".info/connected");
+
+        connectedRef.on("value", (snap) => {
+            if (snap.val() === true) {
+                userPresenceRef.onDisconnect().remove();
+                userPresenceRef.set(currentUser.name);
+            }
+        });
+    }
+
+    function renderOnlineStatus() {
+        const activeNames = Object.values(onlineUsers);
+        const container = document.getElementById('onlineList');
+
+        if (activeNames.length === 0) {
+            container.textContent = "None";
+        } else {
+            container.textContent = activeNames.join(", ");
+        }
+        if (currentUser) updateUI();
     }
 
     function attemptLogin() {
@@ -340,13 +530,24 @@
                 el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
             });
 
+            setupPresence();
+            checkCurseAlert();
             updateUI();
         } else {
             err.textContent = "Incorrect Password! Please try again.";
         }
     }
 
+    function checkCurseAlert() {
+        if (currentUser && currentUser.activeCurse) {
+            alert(`⚠️ WARNING YOU HAVE BEEN CURSED! ⚠️\n\nCurse Details: ${currentUser.activeCurse.name}\nForced Outcome: ${currentUser.activeCurse.outcome}`);
+        }
+    }
+
     function logout() {
+        if (db && currentUser) {
+            db.ref(`online/${currentUser.name.replace(/[^a-zA-Z0-9]/g, "_")}`).remove();
+        }
         currentUser = null;
         document.getElementById('loginPass').value = '';
         document.getElementById('loginError').textContent = '';
@@ -384,13 +585,72 @@
         if (type === 'leaf') {
             const success = Math.random() < 0.90;
             if (success) {
-                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} was hit with: "${outcome}"!`);
+                player.activeCurse = { name: "🍃 Leaf Curse (90%)", outcome: outcome };
+                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} is now cursed with: "${outcome}"!`);
             } else {
-                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} broke free from the curse!`);
+                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} resisted the curse!`);
             }
         } else if (type === 'diddy') {
-            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is forced to execute: "${outcome}"!`);
+            player.activeCurse = { name: "🦍 Diddy Kong Curse (100%)", outcome: outcome };
+            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is now cursed with: "${outcome}"!`);
         }
+        saveData();
+    }
+
+    function clearCurse() {
+        if (!currentUser || !currentUser.isHost) return;
+        const targetIndex = document.getElementById('curseTarget').value;
+        players[targetIndex].activeCurse = null;
+        alert(`✨ Curse cleared for ${players[targetIndex].name}!`);
+        saveData();
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text || !currentUser) return;
+
+        const msgObj = {
+            sender: currentUser.name,
+            text: text,
+            timestamp: Date.now()
+        };
+
+        if (db) {
+            db.ref("chat").push(msgObj);
+        }
+        input.value = '';
+    }
+
+    function renderChat(messages) {
+        const chatBox = document.getElementById('chatMessages');
+        chatBox.innerHTML = '';
+        if (!messages) return;
+
+        Object.values(messages).forEach(msg => {
+            const isMe = currentUser && currentUser.name === msg.sender;
+            
+            const wrap = document.createElement('div');
+            wrap.style.display = 'flex';
+            wrap.style.flexDirection = 'column';
+            wrap.style.alignItems = isMe ? 'flex-end' : 'flex-start';
+
+            if (!isMe) {
+                const senderLabel = document.createElement('span');
+                senderLabel.className = 'msg-sender';
+                senderLabel.textContent = msg.sender;
+                wrap.appendChild(senderLabel);
+            }
+
+            const bubble = document.createElement('div');
+            bubble.className = `msg-bubble ${isMe ? 'msg-sent' : 'msg-received'}`;
+            bubble.textContent = msg.text;
+
+            wrap.appendChild(bubble);
+            chatBox.appendChild(wrap);
+        });
+
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function updateUI() {
@@ -403,6 +663,7 @@
 
         let currentRank = 1;
         const goal = 50;
+        const onlineNames = Object.values(onlineUsers);
 
         sorted.forEach((p, index) => {
             if (index > 0 && p.wins < sorted[index - 1].wins) {
@@ -411,13 +672,18 @@
 
             let percent = Math.min(Math.round((p.wins / goal) * 100), 100);
             let origIndex = players.findIndex(orig => orig.name === p.name);
+            let isOnline = onlineNames.includes(p.name);
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>#${currentRank}</b></td>
                 <td>
                     <div class="player-info">
-                        <span><b>${p.name}</b></span>
+                        <span>
+                            <b>${p.name}</b> 
+                            ${p.activeCurse ? '💀' : ''} 
+                            ${isOnline ? '<span class="online-dot" title="Online now"></span>' : ''}
+                        </span>
                         <div class="progress-container">
                             <div class="progress-bar" style="width: ${percent}%;"></div>
                         </div>
@@ -434,7 +700,7 @@
 
             let opt = document.createElement('option');
             opt.value = origIndex;
-            opt.textContent = `${p.name} (${p.wins} wins)`;
+            opt.textContent = `${p.name} (${p.wins} wins)${p.activeCurse ? ' 💀 [Cursed]' : ''}`;
             curseSelect.appendChild(opt);
         });
 
