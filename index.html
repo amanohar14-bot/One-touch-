@@ -15,7 +15,7 @@
             --accent-gold: #d29922;
             --accent-red: #da3633;
             --accent-purple: #8957e5;
-            --accent-blue: #007aff;
+            --accent-blue: #58a6ff;
             --text-color: #c9d1d9;
             --border-color: #30363d;
         }
@@ -87,7 +87,7 @@
             font-size: 0.95rem;
         }
 
-        th { background-color: #21262d; color: #58a6ff; }
+        th { background-color: #21262d; color: var(--accent-blue); }
         tr:nth-child(1) td { font-weight: bold; color: #f1e05a; }
 
         .action-btns {
@@ -111,33 +111,102 @@
             font-size: 0.85rem;
         }
 
-        .dream-team-grid {
+        /* --- FC 27 ULTIMATE TEAM CARDS --- */
+        .fut-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-top: 10px;
         }
 
-        .dream-card {
-            background: #21262d;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+        .fut-card {
+            background: linear-gradient(135deg, #f5d77f 0%, #d29922 40%, #7d5006 100%);
+            color: #1a1000;
+            border-radius: 12px;
+            padding: 12px 10px;
+            box-shadow: 0 4px 15px rgba(210, 153, 34, 0.3);
+            border: 2px solid #ffeeaa;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .fut-card.honorable {
+            background: linear-gradient(135deg, #7ee787 0%, #2ea043 40%, #0d3814 100%);
+            color: #031c08;
+            border-color: #aff5b4;
+            box-shadow: 0 4px 15px rgba(46, 160, 67, 0.3);
+            grid-column: span 2;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .fut-top {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+        }
+
+        .fut-rating-pos {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .fut-rating {
+            font-size: 1.3rem;
+            font-weight: 900;
+        }
+
+        .fut-pos {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .fut-badges {
+            display: flex;
+            gap: 6px;
+            font-size: 1rem;
+            align-items: center;
+        }
+
+        .fut-photo {
+            font-size: 2.2rem;
+            margin: 2px 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .fut-name {
+            font-size: 0.95rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
             text-align: center;
         }
 
-        .dream-card .role {
-            font-size: 0.75rem;
-            color: var(--accent-gold);
-            font-weight: bold;
-            text-transform: uppercase;
+        .fut-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px 8px;
+            width: 100%;
+            font-size: 0.72rem;
+            font-weight: 800;
+            border-top: 1px solid rgba(0, 0, 0, 0.2);
+            padding-top: 6px;
         }
 
-        .dream-card .player-name {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 2px;
+        .fut-stat-item {
+            display: flex;
+            justify-content: space-between;
         }
 
         .progress-container {
@@ -161,122 +230,6 @@
         .host-only { display: none; }
         .app-content { display: none; }
         .user-tag { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 15px; }
-
-        .online-dot {
-            height: 9px;
-            width: 9px;
-            background-color: #2ea043;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 5px;
-            box-shadow: 0 0 6px #2ea043;
-        }
-
-        .online-box {
-            background: #1f242c;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #8b949e;
-        }
-
-        /* iMessage Chat UI */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 320px;
-            background-color: #000;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-right: 5px;
-        }
-
-        .msg-bubble {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 18px;
-            font-size: 0.9rem;
-            line-height: 1.3;
-            word-wrap: break-word;
-            position: relative;
-        }
-
-        .msg-sent {
-            align-self: flex-end;
-            background-color: #007aff;
-            color: #fff;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg-received {
-            align-self: flex-start;
-            background-color: #262628;
-            color: #fff;
-            border-bottom-left-radius: 4px;
-        }
-
-        .msg-sender {
-            font-size: 0.7rem;
-            color: #8e8e93;
-            margin-bottom: 2px;
-            margin-left: 4px;
-        }
-
-        .chat-input-area {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .chat-input-area input {
-            margin: 0;
-            border-radius: 20px;
-            background-color: #1c1c1e;
-            border: 1px solid #3a3a3c;
-            padding: 8px 14px;
-        }
-
-        .chat-input-area button {
-            width: auto;
-            margin: 0;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #007aff;
-            border: none;
-            color: #fff;
-            font-size: 1.1rem;
-        }
-
-        .anthem-card {
-            background: linear-gradient(145deg, #1f242d, #161b22);
-            border: 1px solid var(--accent-gold);
-            text-align: center;
-        }
-
-        .anthem-lyrics {
-            font-style: italic;
-            font-size: 1rem;
-            color: #f1e05a;
-            line-height: 1.6;
-            margin-top: 8px;
-        }
     </style>
 </head>
 <body>
@@ -303,35 +256,129 @@
     <div class="app-content" id="appContent">
         <div class="user-tag" id="userTag"></div>
 
-        <!-- Online Players List -->
-        <div class="online-box">
-            🟢 <b>Online Now:</b> <span id="onlineList">Checking...</span>
-        </div>
-
-        <!-- Dream 5 Team & Honorable Mention -->
+        <!-- FC 27 Dream 5 Ultimate Team Cards -->
         <div class="card">
-            <h3>🌟 Dream 5 XI & Mentions</h3>
-            <div class="dream-team-grid">
-                <div class="dream-card">
-                    <div class="role">⚽ Striker (ST)</div>
-                    <div class="player-name">Taanish</div>
+            <h3>🌟 FC 27 Dream 5 & Mentions</h3>
+            <div class="fut-grid">
+                <!-- Taanish (ST) -->
+                <div class="fut-card">
+                    <div class="fut-top">
+                        <div class="fut-rating-pos">
+                            <span class="fut-rating">95</span>
+                            <span class="fut-pos">ST</span>
+                        </div>
+                        <div class="fut-badges">
+                            <span title="India">🇮🇳</span>
+                            <span title="Real Madrid">👑</span>
+                        </div>
+                    </div>
+                    <div class="fut-photo">⚽</div>
+                    <div class="fut-name">Taanish</div>
+                    <div class="fut-stats">
+                        <div class="fut-stat-item"><span>PAC</span><span>96</span></div>
+                        <div class="fut-stat-item"><span>DRI</span><span>97</span></div>
+                        <div class="fut-stat-item"><span>SHO</span><span>98</span></div>
+                        <div class="fut-stat-item"><span>DEF</span><span>45</span></div>
+                        <div class="fut-stat-item"><span>PAS</span><span>91</span></div>
+                        <div class="fut-stat-item"><span>PHY</span><span>88</span></div>
+                    </div>
                 </div>
-                <div class="dream-card">
-                    <div class="role">⚡ Right Wing (RW)</div>
-                    <div class="player-name">Akshuman</div>
+
+                <!-- Akshuman (RW) -->
+                <div class="fut-card">
+                    <div class="fut-top">
+                        <div class="fut-rating-pos">
+                            <span class="fut-rating">94</span>
+                            <span class="fut-pos">RW</span>
+                        </div>
+                        <div class="fut-badges">
+                            <span title="India">🇮🇳</span>
+                            <span title="Real Madrid">👑</span>
+                        </div>
+                    </div>
+                    <div class="fut-photo">⚽</div>
+                    <div class="fut-name">Akshuman</div>
+                    <div class="fut-stats">
+                        <div class="fut-stat-item"><span>PAC</span><span>98</span></div>
+                        <div class="fut-stat-item"><span>DRI</span><span>97</span></div>
+                        <div class="fut-stat-item"><span>SHO</span><span>92</span></div>
+                        <div class="fut-stat-item"><span>DEF</span><span>52</span></div>
+                        <div class="fut-stat-item"><span>PAS</span><span>93</span></div>
+                        <div class="fut-stat-item"><span>PHY</span><span>84</span></div>
+                    </div>
                 </div>
-                <div class="dream-card">
-                    <div class="role">⚡ Left Wing (LW)</div>
-                    <div class="player-name">Daniel</div>
+
+                <!-- Daniel (LW) -->
+                <div class="fut-card">
+                    <div class="fut-top">
+                        <div class="fut-rating-pos">
+                            <span class="fut-rating">94</span>
+                            <span class="fut-pos">LW</span>
+                        </div>
+                        <div class="fut-badges">
+                            <span title="India">🇮🇳</span>
+                            <span title="Real Madrid">👑</span>
+                        </div>
+                    </div>
+                    <div class="fut-photo">⚽</div>
+                    <div class="fut-name">Daniel</div>
+                    <div class="fut-stats">
+                        <div class="fut-stat-item"><span>PAC</span><span>97</span></div>
+                        <div class="fut-stat-item"><span>DRI</span><span>96</span></div>
+                        <div class="fut-stat-item"><span>SHO</span><span>91</span></div>
+                        <div class="fut-stat-item"><span>DEF</span><span>50</span></div>
+                        <div class="fut-stat-item"><span>PAS</span><span>94</span></div>
+                        <div class="fut-stat-item"><span>PHY</span><span>82</span></div>
+                    </div>
                 </div>
-                <div class="dream-card">
-                    <div class="role">🧤 Goalkeeper (GK)</div>
-                    <div class="player-name">Aarav</div>
+
+                <!-- Aarav (GK) -->
+                <div class="fut-card">
+                    <div class="fut-top">
+                        <div class="fut-rating-pos">
+                            <span class="fut-rating">96</span>
+                            <span class="fut-pos">GK</span>
+                        </div>
+                        <div class="fut-badges">
+                            <span title="India">🇮🇳</span>
+                            <span title="Real Madrid">👑</span>
+                        </div>
+                    </div>
+                    <div class="fut-photo">⚽</div>
+                    <div class="fut-name">Aarav</div>
+                    <div class="fut-stats">
+                        <div class="fut-stat-item"><span>DIV</span><span>96</span></div>
+                        <div class="fut-stat-item"><span>REF</span><span>98</span></div>
+                        <div class="fut-stat-item"><span>HAN</span><span>94</span></div>
+                        <div class="fut-stat-item"><span>SPD</span><span>89</span></div>
+                        <div class="fut-stat-item"><span>KIC</span><span>92</span></div>
+                        <div class="fut-stat-item"><span>POS</span><span>97</span></div>
+                    </div>
                 </div>
-            </div>
-            <div class="dream-card" style="margin-top: 10px; background: #1c2128;">
-                <div class="role" style="color: #58a6ff;">🏅 Honorable Mention</div>
-                <div class="player-name">Peiush</div>
+
+                <!-- Peiush (Honorable Mention) -->
+                <div class="fut-card honorable">
+                    <div class="fut-top">
+                        <div class="fut-rating-pos">
+                            <span class="fut-rating">91</span>
+                            <span class="fut-pos">SUB / HM</span>
+                        </div>
+                        <div class="fut-badges">
+                            <span title="India">🇮🇳</span>
+                            <span title="Real Madrid">👑</span>
+                        </div>
+                    </div>
+                    <div class="fut-photo">⚽</div>
+                    <div class="fut-name">Peiush</div>
+                    <div class="fut-stats">
+                        <div class="fut-stat-item"><span>PAC</span><span>90</span></div>
+                        <div class="fut-stat-item"><span>DRI</span><span>92</span></div>
+                        <div class="fut-stat-item"><span>SHO</span><span>89</span></div>
+                        <div class="fut-stat-item"><span>DEF</span><span>78</span></div>
+                        <div class="fut-stat-item"><span>PAS</span><span>90</span></div>
+                        <div class="fut-stat-item"><span>PHY</span><span>86</span></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -363,7 +410,6 @@
                 <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
                 <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
             </div>
-            <button class="btn-green" onclick="clearCurse()" style="margin-top: 8px;">✨ Clear Selected Player Curse</button>
         </div>
 
         <!-- Leaderboard Standings -->
@@ -382,55 +428,31 @@
             </table>
         </div>
 
-        <!-- iMessage Chat Panel -->
-        <div class="card">
-            <h3>💬 iMessage Chat</h3>
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="iMessage" onkeydown="if(event.key === 'Enter') sendMessage()">
-                    <button onclick="sendMessage()">⬆</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- National Anthem -->
-        <div class="card anthem-card">
-            <h3>🥔 One Touch National Anthem</h3>
-            <p style="font-size: 0.75rem; color: #8b949e; margin: 0;">(To the tune of "You Are My Sunshine")</p>
-            <div class="anthem-lyrics">
-                "We like potatoes, we like doritos,<br>
-                We hate tomatoes, we like potato,<br>
-                We like doritos, potato, potatoes,<br>
-                Potatoes!" 🎶
-            </div>
-        </div>
-
         <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
     </div>
 </div>
 
 <script>
+    // Database URL string
     const FIREBASE_DB_URL = "https://one-touch-leaderboard-default-rtdb.firebaseio.com/";
 
     let defaultPlayers = [
-        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true, activeCurse: null },
-        { name: "Akshuman", wins: 42, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Daniel", wins: 42, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Jashith", wins: 29, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Taanish", wins: 12, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Peiush", wins: 9, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Sai", wins: 6, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Manaar", wins: 3, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Tawan", wins: 3, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Muhamed", wins: 1, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Danush", wins: 1, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Sathvik", wins: 1, pass: "1234", isHost: false, activeCurse: null },
-        { name: "Krithik", wins: 1, pass: "1234", isHost: false, activeCurse: null }
+        { name: "Aarav Manohar", wins: 12, pass: "0105", isHost: true },
+        { name: "Akshuman", wins: 42, pass: "1234", isHost: false },
+        { name: "Daniel", wins: 42, pass: "1234", isHost: false },
+        { name: "Jashith", wins: 29, pass: "1234", isHost: false },
+        { name: "Taanish", wins: 12, pass: "1234", isHost: false },
+        { name: "Peiush", wins: 9, pass: "1234", isHost: false },
+        { name: "Sai", wins: 6, pass: "1234", isHost: false },
+        { name: "Manaar", wins: 3, pass: "1234", isHost: false },
+        { name: "Tawan", wins: 3, pass: "1234", isHost: false },
+        { name: "Muhamed", wins: 1, pass: "1234", isHost: false },
+        { name: "Danush", wins: 1, pass: "1234", isHost: false },
+        { name: "Sathvik", wins: 1, pass: "1234", isHost: false },
+        { name: "Krithik", wins: 1, pass: "1234", isHost: false }
     ];
 
     let players = [...defaultPlayers];
-    let onlineUsers = {};
     let currentUser = null;
 
     function populateDropdown() {
@@ -453,7 +475,6 @@
             firebase.initializeApp({ databaseURL: FIREBASE_DB_URL });
             db = firebase.database();
 
-            // Sync Leaderboard
             db.ref("leaderboard").on("value", (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
@@ -463,55 +484,11 @@
                     players = [...defaultPlayers];
                 }
                 populateDropdown();
-                if (currentUser) {
-                    const freshUser = players.find(p => p.name === currentUser.name);
-                    if (freshUser) currentUser = freshUser;
-                    checkCurseAlert();
-                    updateUI();
-                }
+                if (currentUser) updateUI();
             });
-
-            // Sync Presence
-            db.ref("online").on("value", (snapshot) => {
-                onlineUsers = snapshot.val() || {};
-                renderOnlineStatus();
-            });
-
-            // Sync iMessage Chat
-            db.ref("chat").on("value", (snapshot) => {
-                const messages = snapshot.val();
-                renderChat(messages);
-            });
-
         } catch (e) {
             console.error("Firebase failed to initialize:", e);
         }
-    }
-
-    function setupPresence() {
-        if (!db || !currentUser) return;
-
-        const userPresenceRef = db.ref(`online/${currentUser.name.replace(/[^a-zA-Z0-9]/g, "_")}`);
-        const connectedRef = db.ref(".info/connected");
-
-        connectedRef.on("value", (snap) => {
-            if (snap.val() === true) {
-                userPresenceRef.onDisconnect().remove();
-                userPresenceRef.set(currentUser.name);
-            }
-        });
-    }
-
-    function renderOnlineStatus() {
-        const activeNames = Object.values(onlineUsers);
-        const container = document.getElementById('onlineList');
-
-        if (activeNames.length === 0) {
-            container.textContent = "None";
-        } else {
-            container.textContent = activeNames.join(", ");
-        }
-        if (currentUser) updateUI();
     }
 
     function attemptLogin() {
@@ -530,24 +507,13 @@
                 el.style.display = currentUser.isHost ? (el.tagName === 'TH' || el.tagName === 'TD' ? 'table-cell' : 'block') : 'none';
             });
 
-            setupPresence();
-            checkCurseAlert();
             updateUI();
         } else {
             err.textContent = "Incorrect Password! Please try again.";
         }
     }
 
-    function checkCurseAlert() {
-        if (currentUser && currentUser.activeCurse) {
-            alert(`⚠️ WARNING YOU HAVE BEEN CURSED! ⚠️\n\nCurse Details: ${currentUser.activeCurse.name}\nForced Outcome: ${currentUser.activeCurse.outcome}`);
-        }
-    }
-
     function logout() {
-        if (db && currentUser) {
-            db.ref(`online/${currentUser.name.replace(/[^a-zA-Z0-9]/g, "_")}`).remove();
-        }
         currentUser = null;
         document.getElementById('loginPass').value = '';
         document.getElementById('loginError').textContent = '';
@@ -585,72 +551,13 @@
         if (type === 'leaf') {
             const success = Math.random() < 0.90;
             if (success) {
-                player.activeCurse = { name: "🍃 Leaf Curse (90%)", outcome: outcome };
-                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} is now cursed with: "${outcome}"!`);
+                alert(`🍃 LEAF CURSE SUCCESS (90%)!\n\n${player.name} was hit with: "${outcome}"!`);
             } else {
-                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} resisted the curse!`);
+                alert(`🍃 LEAF CURSE BACKFIRED (10% Fail)!\n\n${player.name} broke free from the curse!`);
             }
         } else if (type === 'diddy') {
-            player.activeCurse = { name: "🦍 Diddy Kong Curse (100%)", outcome: outcome };
-            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is now cursed with: "${outcome}"!`);
+            alert(`🦍 DIDDY KONG CURSE (100% GUARANTEED)!\n\n${player.name} is forced to execute: "${outcome}"!`);
         }
-        saveData();
-    }
-
-    function clearCurse() {
-        if (!currentUser || !currentUser.isHost) return;
-        const targetIndex = document.getElementById('curseTarget').value;
-        players[targetIndex].activeCurse = null;
-        alert(`✨ Curse cleared for ${players[targetIndex].name}!`);
-        saveData();
-    }
-
-    function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text || !currentUser) return;
-
-        const msgObj = {
-            sender: currentUser.name,
-            text: text,
-            timestamp: Date.now()
-        };
-
-        if (db) {
-            db.ref("chat").push(msgObj);
-        }
-        input.value = '';
-    }
-
-    function renderChat(messages) {
-        const chatBox = document.getElementById('chatMessages');
-        chatBox.innerHTML = '';
-        if (!messages) return;
-
-        Object.values(messages).forEach(msg => {
-            const isMe = currentUser && currentUser.name === msg.sender;
-            
-            const wrap = document.createElement('div');
-            wrap.style.display = 'flex';
-            wrap.style.flexDirection = 'column';
-            wrap.style.alignItems = isMe ? 'flex-end' : 'flex-start';
-
-            if (!isMe) {
-                const senderLabel = document.createElement('span');
-                senderLabel.className = 'msg-sender';
-                senderLabel.textContent = msg.sender;
-                wrap.appendChild(senderLabel);
-            }
-
-            const bubble = document.createElement('div');
-            bubble.className = `msg-bubble ${isMe ? 'msg-sent' : 'msg-received'}`;
-            bubble.textContent = msg.text;
-
-            wrap.appendChild(bubble);
-            chatBox.appendChild(wrap);
-        });
-
-        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function updateUI() {
@@ -663,7 +570,6 @@
 
         let currentRank = 1;
         const goal = 50;
-        const onlineNames = Object.values(onlineUsers);
 
         sorted.forEach((p, index) => {
             if (index > 0 && p.wins < sorted[index - 1].wins) {
@@ -672,18 +578,13 @@
 
             let percent = Math.min(Math.round((p.wins / goal) * 100), 100);
             let origIndex = players.findIndex(orig => orig.name === p.name);
-            let isOnline = onlineNames.includes(p.name);
 
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><b>#${currentRank}</b></td>
                 <td>
                     <div class="player-info">
-                        <span>
-                            <b>${p.name}</b> 
-                            ${p.activeCurse ? '💀' : ''} 
-                            ${isOnline ? '<span class="online-dot" title="Online now"></span>' : ''}
-                        </span>
+                        <span><b>${p.name}</b></span>
                         <div class="progress-container">
                             <div class="progress-bar" style="width: ${percent}%;"></div>
                         </div>
@@ -700,7 +601,7 @@
 
             let opt = document.createElement('option');
             opt.value = origIndex;
-            opt.textContent = `${p.name} (${p.wins} wins)${p.activeCurse ? ' 💀 [Cursed]' : ''}`;
+            opt.textContent = `${p.name} (${p.wins} wins)`;
             curseSelect.appendChild(opt);
         });
 
@@ -720,6 +621,4 @@
 
 </body>
 </html>
-
-
 
