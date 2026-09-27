@@ -111,7 +111,7 @@
             font-size: 0.85rem;
         }
 
-        /* --- FC 27 ULTIMATE TEAM CARDS --- */
+        /* --- FC TOTY ULTIMATE TEAM CARDS --- */
         .fut-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -120,23 +120,24 @@
         }
 
         .fut-card {
-            background: linear-gradient(135deg, #f5d77f 0%, #d29922 40%, #7d5006 100%);
-            color: #1a1000;
+            background: linear-gradient(145deg, #021B38 0%, #083b70 35%, #185a9d 70%, #d4af37 100%);
+            color: #ffffff;
             border-radius: 12px;
             padding: 12px 10px;
-            box-shadow: 0 4px 15px rgba(210, 153, 34, 0.3);
-            border: 2px solid #ffeeaa;
+            box-shadow: 0 0 15px rgba(0, 180, 255, 0.4), inset 0 0 8px rgba(212, 175, 55, 0.5);
+            border: 2px solid #d4af37;
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
         .fut-card.honorable {
-            background: linear-gradient(135deg, #7ee787 0%, #2ea043 40%, #0d3814 100%);
-            color: #031c08;
+            background: linear-gradient(145deg, #0b2e13 0%, #195e2b 40%, #2ea043 80%, #7ee787 100%);
+            color: #ffffff;
             border-color: #aff5b4;
-            box-shadow: 0 4px 15px rgba(46, 160, 67, 0.3);
+            box-shadow: 0 0 15px rgba(46, 160, 67, 0.4);
             grid-column: span 2;
             width: 80%;
             margin: 0 auto;
@@ -147,7 +148,7 @@
             width: 100%;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
             padding-bottom: 4px;
             margin-bottom: 6px;
         }
@@ -162,6 +163,7 @@
         .fut-rating {
             font-size: 1.3rem;
             font-weight: 900;
+            color: #ffd700;
         }
 
         .fut-pos {
@@ -169,19 +171,35 @@
             font-weight: 800;
             text-transform: uppercase;
             margin-top: 2px;
+            color: #58a6ff;
         }
 
         .fut-badges {
             display: flex;
-            gap: 6px;
-            font-size: 1rem;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .fut-nation {
+            font-size: 0.72rem;
+            font-weight: 800;
+            display: flex;
             align-items: center;
+            gap: 3px;
+        }
+
+        .rm-badge {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
         }
 
         .fut-photo {
             font-size: 2.2rem;
             margin: 2px 0;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 2px 5px rgba(0, 230, 255, 0.6));
         }
 
         .fut-name {
@@ -191,6 +209,7 @@
             letter-spacing: 0.5px;
             margin-bottom: 6px;
             text-align: center;
+            color: #ffffff;
         }
 
         .fut-stats {
@@ -200,13 +219,17 @@
             width: 100%;
             font-size: 0.72rem;
             font-weight: 800;
-            border-top: 1px solid rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
             padding-top: 6px;
         }
 
         .fut-stat-item {
             display: flex;
             justify-content: space-between;
+        }
+
+        .fut-stat-item span:first-child {
+            color: #8bbdff;
         }
 
         .progress-container {
@@ -256,9 +279,9 @@
     <div class="app-content" id="appContent">
         <div class="user-tag" id="userTag"></div>
 
-        <!-- FC 27 Dream 5 Ultimate Team Cards -->
+        <!-- FC TOTY Dream 5 Ultimate Team Cards -->
         <div class="card">
-            <h3>🌟 FC 27 Dream 5 & Mentions</h3>
+            <h3>🌟 FC TOTY Dream 5 & Mentions</h3>
             <div class="fut-grid">
                 <!-- Taanish (ST) -->
                 <div class="fut-card">
@@ -268,8 +291,8 @@
                             <span class="fut-pos">ST</span>
                         </div>
                         <div class="fut-badges">
-                            <span title="India">🇮🇳</span>
-                            <span title="Real Madrid">👑</span>
+                            <span class="fut-nation">🇮🇳 India</span>
+                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
                         </div>
                     </div>
                     <div class="fut-photo">⚽</div>
@@ -292,8 +315,8 @@
                             <span class="fut-pos">RW</span>
                         </div>
                         <div class="fut-badges">
-                            <span title="India">🇮🇳</span>
-                            <span title="Real Madrid">👑</span>
+                            <span class="fut-nation">🇮🇳 India</span>
+                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
                         </div>
                     </div>
                     <div class="fut-photo">⚽</div>
@@ -316,8 +339,8 @@
                             <span class="fut-pos">LW</span>
                         </div>
                         <div class="fut-badges">
-                            <span title="India">🇮🇳</span>
-                            <span title="Real Madrid">👑</span>
+                            <span class="fut-nation">🇮🇳 India</span>
+                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
                         </div>
                     </div>
                     <div class="fut-photo">⚽</div>
@@ -340,8 +363,8 @@
                             <span class="fut-pos">GK</span>
                         </div>
                         <div class="fut-badges">
-                            <span title="India">🇮🇳</span>
-                            <span title="Real Madrid">👑</span>
+                            <span class="fut-nation">🇮🇳 India</span>
+                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
                         </div>
                     </div>
                     <div class="fut-photo">⚽</div>
@@ -364,8 +387,8 @@
                             <span class="fut-pos">SUB / HM</span>
                         </div>
                         <div class="fut-badges">
-                            <span title="India">🇮🇳</span>
-                            <span title="Real Madrid">👑</span>
+                            <span class="fut-nation">🇮🇳 India</span>
+                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
                         </div>
                     </div>
                     <div class="fut-photo">⚽</div>
