@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Touch Football - Live Leaderboard</title>
+    <title>One Touch League Hub</title>
     <!-- Firebase JS SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -16,6 +16,7 @@
             --accent-red: #da3633;
             --accent-purple: #8957e5;
             --accent-blue: #58a6ff;
+            --accent-futties: #ff007f;
             --text-color: #c9d1d9;
             --border-color: #30363d;
         }
@@ -42,12 +43,65 @@
             margin-bottom: 10px;
         }
 
+        /* --- PAGE NAVIGATION TABS --- */
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 10px 4px;
+            background-color: #21262d;
+            border: 1px solid var(--border-color);
+            color: #8b949e;
+            font-weight: bold;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s ease;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #ff007f, #7a1036);
+            color: #ffffff;
+            border-color: #ff7ebe;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
+        }
+
+        .coming-soon-card {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .coming-soon-card h2 {
+            font-size: 1.8rem;
+            color: var(--accent-futties);
+            margin-bottom: 10px;
+        }
+
+        .coming-soon-card p {
+            color: #8b949e;
+            font-size: 1rem;
         }
 
         input, select, button {
@@ -111,7 +165,7 @@
             font-size: 0.85rem;
         }
 
-        /* --- FC TOTY ULTIMATE TEAM CARDS --- */
+        /* --- FC FUTTIES ULTIMATE TEAM CARDS --- */
         .fut-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -120,12 +174,12 @@
         }
 
         .fut-card {
-            background: linear-gradient(145deg, #021B38 0%, #083b70 35%, #185a9d 70%, #d4af37 100%);
+            background: linear-gradient(145deg, #4a0028 0%, #a00055 35%, #ff007f 70%, #ffd700 100%);
             color: #ffffff;
             border-radius: 12px;
             padding: 12px 10px;
-            box-shadow: 0 0 15px rgba(0, 180, 255, 0.4), inset 0 0 8px rgba(212, 175, 55, 0.5);
-            border: 2px solid #d4af37;
+            box-shadow: 0 0 18px rgba(255, 0, 127, 0.6), inset 0 0 8px rgba(255, 215, 0, 0.6);
+            border: 2px solid #ffd700;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -134,10 +188,10 @@
         }
 
         .fut-card.honorable {
-            background: linear-gradient(145deg, #0b2e13 0%, #195e2b 40%, #2ea043 80%, #7ee787 100%);
+            background: linear-gradient(145deg, #2b0018 0%, #70003b 40%, #c40062 80%, #ff7ebe 100%);
             color: #ffffff;
-            border-color: #aff5b4;
-            box-shadow: 0 0 15px rgba(46, 160, 67, 0.4);
+            border-color: #ff7ebe;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
             grid-column: span 2;
             width: 80%;
             margin: 0 auto;
@@ -148,7 +202,7 @@
             width: 100%;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             padding-bottom: 4px;
             margin-bottom: 6px;
         }
@@ -161,9 +215,10 @@
         }
 
         .fut-rating {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 900;
-            color: #ffd700;
+            color: #ffffff;
+            text-shadow: 0 0 5px #ff007f;
         }
 
         .fut-pos {
@@ -171,7 +226,7 @@
             font-weight: 800;
             text-transform: uppercase;
             margin-top: 2px;
-            color: #58a6ff;
+            color: #ffd700;
         }
 
         .fut-badges {
@@ -199,7 +254,7 @@
         .fut-photo {
             font-size: 2.2rem;
             margin: 2px 0;
-            filter: drop-shadow(0 2px 5px rgba(0, 230, 255, 0.6));
+            filter: drop-shadow(0 2px 5px rgba(255, 215, 0, 0.8));
         }
 
         .fut-name {
@@ -219,7 +274,7 @@
             width: 100%;
             font-size: 0.72rem;
             font-weight: 800;
-            border-top: 1px solid rgba(255, 255, 255, 0.25);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
             padding-top: 6px;
         }
 
@@ -229,7 +284,7 @@
         }
 
         .fut-stat-item span:first-child {
-            color: #8bbdff;
+            color: #ffb3d9;
         }
 
         .progress-container {
@@ -244,7 +299,7 @@
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #2ea043, #d29922);
+            background: linear-gradient(90deg, #ff007f, #d29922);
             width: 0%;
             transition: width 0.4s ease-in-out;
         }
@@ -258,12 +313,19 @@
 <body>
 
 <div class="container">
-    <h1>⚽ One Touch League</h1>
+    <h1>🏆 One Touch Sports Hub</h1>
+
+    <!-- Page Navigation Bar -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchPage('footballTab', this)">⚽ Football</button>
+        <button class="nav-tab" onclick="switchPage('rugbyTab', this)">🏉 Rugby</button>
+        <button class="nav-tab" onclick="switchPage('dodgeballTab', this)">🤾 Dodgeball</button>
+    </div>
 
     <!-- Password Login Screen -->
     <div class="card" id="loginCard">
         <h3>🔒 Protected Login</h3>
-        <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to view or manage standings.</p>
+        <p style="font-size: 0.85rem; color: #8b949e; text-align: center;">Select your name and enter your password to access all sport standings.</p>
         
         <label>Select Player:</label>
         <select id="loginSelect"></select>
@@ -279,176 +341,197 @@
     <div class="app-content" id="appContent">
         <div class="user-tag" id="userTag"></div>
 
-        <!-- FC TOTY Dream 5 Ultimate Team Cards -->
-        <div class="card">
-            <h3>🌟 FC TOTY Dream 5 & Mentions</h3>
-            <div class="fut-grid">
-                <!-- Taanish (ST) -->
-                <div class="fut-card">
-                    <div class="fut-top">
-                        <div class="fut-rating-pos">
-                            <span class="fut-rating">95</span>
-                            <span class="fut-pos">ST</span>
+        <!-- FOOTBALL TAB PAGE -->
+        <div id="footballTab" class="page-content active">
+            <!-- FC FUTTIES Ultimate Team Cards -->
+            <div class="card">
+                <h3>💖 FC FUTTIES 99 XI & Mentions</h3>
+                <div class="fut-grid">
+                    <!-- Taanish (ST) -->
+                    <div class="fut-card">
+                        <div class="fut-top">
+                            <div class="fut-rating-pos">
+                                <span class="fut-rating">99</span>
+                                <span class="fut-pos">ST</span>
+                            </div>
+                            <div class="fut-badges">
+                                <span class="fut-nation">🇮🇳 India</span>
+                                <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                            </div>
                         </div>
-                        <div class="fut-badges">
-                            <span class="fut-nation">🇮🇳 India</span>
-                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                        <div class="fut-photo">⚽</div>
+                        <div class="fut-name">Taanish</div>
+                        <div class="fut-stats">
+                            <div class="fut-stat-item"><span>PAC</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>DRI</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>SHO</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>DEF</span><span>65</span></div>
+                            <div class="fut-stat-item"><span>PAS</span><span>98</span></div>
+                            <div class="fut-stat-item"><span>PHY</span><span>95</span></div>
                         </div>
                     </div>
-                    <div class="fut-photo">⚽</div>
-                    <div class="fut-name">Taanish</div>
-                    <div class="fut-stats">
-                        <div class="fut-stat-item"><span>PAC</span><span>96</span></div>
-                        <div class="fut-stat-item"><span>DRI</span><span>97</span></div>
-                        <div class="fut-stat-item"><span>SHO</span><span>98</span></div>
-                        <div class="fut-stat-item"><span>DEF</span><span>45</span></div>
-                        <div class="fut-stat-item"><span>PAS</span><span>91</span></div>
-                        <div class="fut-stat-item"><span>PHY</span><span>88</span></div>
-                    </div>
-                </div>
 
-                <!-- Akshuman (RW) -->
-                <div class="fut-card">
-                    <div class="fut-top">
-                        <div class="fut-rating-pos">
-                            <span class="fut-rating">94</span>
-                            <span class="fut-pos">RW</span>
+                    <!-- Akshuman (RW) -->
+                    <div class="fut-card">
+                        <div class="fut-top">
+                            <div class="fut-rating-pos">
+                                <span class="fut-rating">99</span>
+                                <span class="fut-pos">RW</span>
+                            </div>
+                            <div class="fut-badges">
+                                <span class="fut-nation">🇮🇳 India</span>
+                                <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                            </div>
                         </div>
-                        <div class="fut-badges">
-                            <span class="fut-nation">🇮🇳 India</span>
-                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                        <div class="fut-photo">⚽</div>
+                        <div class="fut-name">Akshuman</div>
+                        <div class="fut-stats">
+                            <div class="fut-stat-item"><span>PAC</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>DRI</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>SHO</span><span>98</span></div>
+                            <div class="fut-stat-item"><span>DEF</span><span>70</span></div>
+                            <div class="fut-stat-item"><span>PAS</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>PHY</span><span>92</span></div>
                         </div>
                     </div>
-                    <div class="fut-photo">⚽</div>
-                    <div class="fut-name">Akshuman</div>
-                    <div class="fut-stats">
-                        <div class="fut-stat-item"><span>PAC</span><span>98</span></div>
-                        <div class="fut-stat-item"><span>DRI</span><span>97</span></div>
-                        <div class="fut-stat-item"><span>SHO</span><span>92</span></div>
-                        <div class="fut-stat-item"><span>DEF</span><span>52</span></div>
-                        <div class="fut-stat-item"><span>PAS</span><span>93</span></div>
-                        <div class="fut-stat-item"><span>PHY</span><span>84</span></div>
-                    </div>
-                </div>
 
-                <!-- Daniel (LW) -->
-                <div class="fut-card">
-                    <div class="fut-top">
-                        <div class="fut-rating-pos">
-                            <span class="fut-rating">94</span>
-                            <span class="fut-pos">LW</span>
+                    <!-- Daniel (LW) -->
+                    <div class="fut-card">
+                        <div class="fut-top">
+                            <div class="fut-rating-pos">
+                                <span class="fut-rating">99</span>
+                                <span class="fut-pos">LW</span>
+                            </div>
+                            <div class="fut-badges">
+                                <span class="fut-nation">🇮🇳 India</span>
+                                <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                            </div>
                         </div>
-                        <div class="fut-badges">
-                            <span class="fut-nation">🇮🇳 India</span>
-                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                        <div class="fut-photo">⚽</div>
+                        <div class="fut-name">Daniel</div>
+                        <div class="fut-stats">
+                            <div class="fut-stat-item"><span>PAC</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>DRI</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>SHO</span><span>97</span></div>
+                            <div class="fut-stat-item"><span>DEF</span><span>68</span></div>
+                            <div class="fut-stat-item"><span>PAS</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>PHY</span><span>90</span></div>
                         </div>
                     </div>
-                    <div class="fut-photo">⚽</div>
-                    <div class="fut-name">Daniel</div>
-                    <div class="fut-stats">
-                        <div class="fut-stat-item"><span>PAC</span><span>97</span></div>
-                        <div class="fut-stat-item"><span>DRI</span><span>96</span></div>
-                        <div class="fut-stat-item"><span>SHO</span><span>91</span></div>
-                        <div class="fut-stat-item"><span>DEF</span><span>50</span></div>
-                        <div class="fut-stat-item"><span>PAS</span><span>94</span></div>
-                        <div class="fut-stat-item"><span>PHY</span><span>82</span></div>
-                    </div>
-                </div>
 
-                <!-- Aarav (GK) -->
-                <div class="fut-card">
-                    <div class="fut-top">
-                        <div class="fut-rating-pos">
-                            <span class="fut-rating">96</span>
-                            <span class="fut-pos">GK</span>
+                    <!-- Aarav (GK) -->
+                    <div class="fut-card">
+                        <div class="fut-top">
+                            <div class="fut-rating-pos">
+                                <span class="fut-rating">99</span>
+                                <span class="fut-pos">GK</span>
+                            </div>
+                            <div class="fut-badges">
+                                <span class="fut-nation">🇮🇳 India</span>
+                                <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                            </div>
                         </div>
-                        <div class="fut-badges">
-                            <span class="fut-nation">🇮🇳 India</span>
-                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                        <div class="fut-photo">⚽</div>
+                        <div class="fut-name">Aarav</div>
+                        <div class="fut-stats">
+                            <div class="fut-stat-item"><span>DIV</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>REF</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>HAN</span><span>99</span></div>
+                            <div class="fut-stat-item"><span>SPD</span><span>95</span></div>
+                            <div class="fut-stat-item"><span>KIC</span><span>98</span></div>
+                            <div class="fut-stat-item"><span>POS</span><span>99</span></div>
                         </div>
                     </div>
-                    <div class="fut-photo">⚽</div>
-                    <div class="fut-name">Aarav</div>
-                    <div class="fut-stats">
-                        <div class="fut-stat-item"><span>DIV</span><span>96</span></div>
-                        <div class="fut-stat-item"><span>REF</span><span>98</span></div>
-                        <div class="fut-stat-item"><span>HAN</span><span>94</span></div>
-                        <div class="fut-stat-item"><span>SPD</span><span>89</span></div>
-                        <div class="fut-stat-item"><span>KIC</span><span>92</span></div>
-                        <div class="fut-stat-item"><span>POS</span><span>97</span></div>
-                    </div>
-                </div>
 
-                <!-- Peiush (Honorable Mention) -->
-                <div class="fut-card honorable">
-                    <div class="fut-top">
-                        <div class="fut-rating-pos">
-                            <span class="fut-rating">91</span>
-                            <span class="fut-pos">SUB / HM</span>
+                    <!-- Peiush (Sub - 94 Rating) -->
+                    <div class="fut-card honorable">
+                        <div class="fut-top">
+                            <div class="fut-rating-pos">
+                                <span class="fut-rating">94</span>
+                                <span class="fut-pos">SUB</span>
+                            </div>
+                            <div class="fut-badges">
+                                <span class="fut-nation">🇮🇳 India</span>
+                                <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                            </div>
                         </div>
-                        <div class="fut-badges">
-                            <span class="fut-nation">🇮🇳 India</span>
-                            <img class="rm-badge" src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid">
+                        <div class="fut-photo">⚽</div>
+                        <div class="fut-name">Peiush</div>
+                        <div class="fut-stats">
+                            <div class="fut-stat-item"><span>PAC</span><span>92</span></div>
+                            <div class="fut-stat-item"><span>DRI</span><span>94</span></div>
+                            <div class="fut-stat-item"><span>SHO</span><span>91</span></div>
+                            <div class="fut-stat-item"><span>DEF</span><span>82</span></div>
+                            <div class="fut-stat-item"><span>PAS</span><span>93</span></div>
+                            <div class="fut-stat-item"><span>PHY</span><span>89</span></div>
                         </div>
-                    </div>
-                    <div class="fut-photo">⚽</div>
-                    <div class="fut-name">Peiush</div>
-                    <div class="fut-stats">
-                        <div class="fut-stat-item"><span>PAC</span><span>90</span></div>
-                        <div class="fut-stat-item"><span>DRI</span><span>92</span></div>
-                        <div class="fut-stat-item"><span>SHO</span><span>89</span></div>
-                        <div class="fut-stat-item"><span>DEF</span><span>78</span></div>
-                        <div class="fut-stat-item"><span>PAS</span><span>90</span></div>
-                        <div class="fut-stat-item"><span>PHY</span><span>86</span></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Match Milestones -->
+            <div class="card">
+                <h3>🔥 Match Milestones</h3>
+                <div class="milestone-box">
+                    <span>⚡ <b>Agony Match</b> (50 Wins):</span>
+                    <span id="agonyStatus">Loading...</span>
+                </div>
+                <div class="milestone-box">
+                    <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
+                    <span id="tortureStatus">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Master Curses Panel -->
+            <div class="card host-only">
+                <h3>🪄 Master Curses Control</h3>
+                <label>Target Player:</label>
+                <select id="curseTarget"></select>
+                <label>Command Outcome:</label>
+                <select id="curseOutcome">
+                    <option value="Forced Miss">Command: Forced Miss</option>
+                    <option value="Forced Goal">Command: Forced Goal / Score</option>
+                    <option value="Forced Save">Command: Forced Save</option>
+                </select>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
+                    <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+                </div>
+            </div>
+
+            <!-- Leaderboard Standings -->
+            <div class="card">
+                <h3>🏆 Leaderboard Standings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player & Goal Progress</th>
+                            <th>Wins</th>
+                            <th class="host-only">Host Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody"></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Match Milestones -->
-        <div class="card">
-            <h3>🔥 Match Milestones</h3>
-            <div class="milestone-box">
-                <span>⚡ <b>Agony Match</b> (50 Wins):</span>
-                <span id="agonyStatus">Loading...</span>
-            </div>
-            <div class="milestone-box">
-                <span>💀 <b>Supreme Torture Match</b> (100 Wins):</span>
-                <span id="tortureStatus">Loading...</span>
+        <!-- RUGBY TAB PAGE -->
+        <div id="rugbyTab" class="page-content">
+            <div class="card coming-soon-card">
+                <h2>🏉 Rugby Website</h2>
+                <p><b>COMING SOON!</b></p>
+                <p>The One Touch Rugby League stats, fixtures, and leaderboard are under development.</p>
             </div>
         </div>
 
-        <!-- Master Curses Panel -->
-        <div class="card host-only">
-            <h3>🪄 Master Curses Control</h3>
-            <label>Target Player:</label>
-            <select id="curseTarget"></select>
-            <label>Command Outcome:</label>
-            <select id="curseOutcome">
-                <option value="Forced Miss">Command: Forced Miss</option>
-                <option value="Forced Goal">Command: Forced Goal / Score</option>
-                <option value="Forced Save">Command: Forced Save</option>
-            </select>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-purple" onclick="castCurse('leaf')">🍃 Leaf Curse (90%)</button>
-                <button class="btn-red" onclick="castCurse('diddy')">🦍 Diddy Kong Curse (100%)</button>
+        <!-- DODGEBALL TAB PAGE -->
+        <div id="dodgeballTab" class="page-content">
+            <div class="card coming-soon-card">
+                <h2>🤾 Dodgeball Website</h2>
+                <p><b>COMING SOON!</b></p>
+                <p>The One Touch Dodgeball tournament tracking and elimination brackets will be available soon.</p>
             </div>
-        </div>
-
-        <!-- Leaderboard Standings -->
-        <div class="card">
-            <h3>🏆 Leaderboard Standings</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player & Goal Progress</th>
-                        <th>Wins</th>
-                        <th class="host-only">Host Action</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody"></tbody>
-            </table>
         </div>
 
         <button class="btn-red" onclick="logout()" style="margin-top: 10px;">Logout</button>
@@ -477,6 +560,14 @@
 
     let players = [...defaultPlayers];
     let currentUser = null;
+
+    function switchPage(pageId, tabBtn) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        
+        document.getElementById(pageId).classList.add('active');
+        tabBtn.classList.add('active');
+    }
 
     function populateDropdown() {
         const select = document.getElementById('loginSelect');
@@ -644,4 +735,3 @@
 
 </body>
 </html>
-
